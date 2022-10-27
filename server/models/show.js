@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 
 const showSchema = new Schema({
   title: { type: String, required: true },
-  description: { type: String, required: true, unique: true },
-  image: { type: String, required: true, minLength: 6 },
+  description: { type: String, required: true },
+  image: { type: String, required: true },
   rating: { type: String, required: true },
-  cast: { type: mongoose.Types.ObjectId, required: true, ref: "Cast" },
+  crew: { type: mongoose.Types.ObjectId, required: true, ref: "Crew" },
   status: {
     type: String,
     enum: ["to-watch", "watching", "watched"],
