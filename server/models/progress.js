@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 
 const progressSchema = new Schema({
   percentage: { type: Number, required: true },
-  achievments: [{ type: String, required: true }],
+  achievments: [
+    { type: mongoose.Types.ObjectId, required: true, ref: "Achievment" },
+  ],
 });
 
 const Progress = mongoose.model("Progress", progressSchema);

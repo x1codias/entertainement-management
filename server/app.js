@@ -6,6 +6,11 @@ const dotenv = require("dotenv");
 
 const HttpError = require("./models/http-error");
 const userRoutes = require("./routes/user-routes");
+const movieRoutes = require("./routes/movie-routes");
+const showRoutes = require("./routes/show-routes");
+const gameRoutes = require("./routes/game-routes");
+const bookRoutes = require("./routes/book-routes");
+const animeRoutes = require("./routes/anime-routes");
 
 dotenv.config({ path: "./config.env" });
 
@@ -28,6 +33,11 @@ app.use(cors());
 app.options("*", cors);
 
 app.use("/api/users", userRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/shows", showRoutes);
+app.use("/api/animes", animeRoutes);
+app.use("/api/books", bookRoutes);
+app.use("/api/games", gameRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);
