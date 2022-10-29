@@ -1,56 +1,102 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const dotenv = require("dotenv");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const helmet = require('helmet');
+const mongoSanitizer = require('mongo-sanitize');
+const xss = require('xss');
+const hpp = require('hpp');
+const compression = require('compression');
 
-const HttpError = require("./models/http-error");
-const userRoutes = require("./routes/user-routes");
-const movieRoutes = require("./routes/movie-routes");
-const showRoutes = require("./routes/show-routes");
-const gameRoutes = require("./routes/game-routes");
-const bookRoutes = require("./routes/book-routes");
-const animeRoutes = require("./routes/anime-routes");
+const HttpError = require('./models/http-error');
+const userRoutes = require('./routes/user-routes');
+const movieRoutes = require('./routes/movie-routes');
+const showRoutes = require('./routes/show-routes');
+const gameRoutes = require('./routes/game-routes');
+const bookRoutes = require('./routes/book-routes');
+const animeRoutes = require('./routes/anime-routes');
 
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: './config.env' });
 
+// Start express app
 const app = express();
 
+app.enable('trust proxy');
+
+// Implement CORS
+app.use(cors());
+
+app.options('*', cors);
+
+// Set Security HTTP headers
+app.use(helmet());
+
+// Limit requests from same API, to prevent brute force attacks and denial of service
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour',
+});
+
+app.use('/api', limiter);
+
+// Body parser, reading data from body into req.body
 app.use(bodyParser.json());
 
-app.use(cors());
-/*app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Controll-Allow-Methods", "GET, POST, PATCH, DELETE");
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitizer());
 
-  next();
-});*/
+// Data sanitization against XSS
+app.use(xss());
 
-app.options("*", cors);
+// Prevent parameter polution
+app.use(hpp());
 
-app.use("/api/users", userRoutes);
-app.use("/api/movies", movieRoutes);
-app.use("/api/shows", showRoutes);
-app.use("/api/animes", animeRoutes);
-app.use("/api/books", bookRoutes);
-app.use("/api/games", gameRoutes);
+// To compress response bodies for all requests that traverse through the middleware
+app.use(compression());
+
+app.use('/api/users', userRoutes);
+app.use('/api/movies', movieRoutes);
+app.use('/api/shows', showRoutes);
+app.use('/api/animes', animeRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/games', gameRoutes);
 
 app.use((req, res, next) => {
-  const error = new HttpError("Could not find this route", 404);
+  const error = new HttpError('Could not find this route', 404);
   return next(error);
 });
 
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION! Shutting down ...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
+let server;
 mongoose
   .connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@chillplanner.yzamz79.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(5000);
+    server = app.listen(5000);
   })
   .catch((err) => {
     console.log(err);
   });
+
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION! Shutting down ...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECIEVED. Shutting down gracefully!');
+  server.close(() => {
+    console.log('Process terminated!');
+  });
+});

@@ -1,22 +1,22 @@
-const express = require("express");
-const { check } = require("express-validator");
+const express = require('express');
+const { check } = require('express-validator');
 
-const userControllers = require("../controllers/user-controllers");
+const userControllers = require('../controllers/user-controllers');
 
 const router = express.Router();
 
 router.post(
-  "/signup",
+  '/signup',
   [
-    check("name").not().isEmpty(),
-    check("email").normalizeEmail().isEmail(),
-    check("password").isLength({ min: 6 }),
+    check('name').not().isEmpty(),
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({ min: 6 }),
   ],
-  userControllers.uploadImage,
-  userControllers.resizeUserPhoto,
+  userControllers.uploadUserImage,
+  userControllers.resizeUserImage,
   userControllers.signup
 );
 
-router.post("/login", userControllers.login);
+router.post('/login', userControllers.login);
 
 module.exports = router;

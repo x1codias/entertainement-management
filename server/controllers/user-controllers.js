@@ -1,42 +1,10 @@
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const sharp = require("sharp");
+const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const HttpError = require("../models/http-error");
-const User = require("../models/user");
-
-const multerStorage = multer.memoryStorage();
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb(new HttpError("Not an image! Please upload only images.", 400), false);
-  }
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
-
-const uploadImage = upload.single("avatar");
-
-const resizeUserPhoto = async (req, res, next) => {
-  if (!req.avatar) return next();
-
-  req.avatar.filename = `user-${req.user._id}-${Date.now()}.jpeg`;
-
-  await sharp(req.avatar.buffer)
-    .resize(500, 500)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`uploads/users/${req.avatar.filename}`);
-
-  next();
-};
+const HttpError = require('../models/http-error');
+const User = require('../models/user');
+const factory = require('../controllers/handler-factory');
 
 const signup = async (req, res, next) => {
   /*const errors = validationResult(req);
@@ -59,7 +27,7 @@ const signup = async (req, res, next) => {
 
   if (existingUser) {
     const error = new HttpError(
-      "User with the provided email already exists, please login instead",
+      'User with the provided email already exists, please login instead',
       422
     );
     return next(error);
@@ -92,7 +60,7 @@ const signup = async (req, res, next) => {
     token = jwt.sign(
       { userId: newUser.id, email: newUser.email },
       process.env.JWT_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
   } catch (err) {
     const error = new HttpError(`Error ${err.message}`, 500);
@@ -123,7 +91,7 @@ const login = async (req, res, next) => {
   }
 
   if (!existingUser) {
-    const error = new HttpError("User with the provided email not found", 422);
+    const error = new HttpError('User with the provided email not found', 422);
     return next(error);
   }
 
@@ -137,7 +105,7 @@ const login = async (req, res, next) => {
 
   if (!isValidPassword) {
     const error = new HttpError(
-      "The provided password is incorrect, please try again",
+      'The provided password is incorrect, please try again',
       422
     );
     return next(error);
@@ -148,7 +116,7 @@ const login = async (req, res, next) => {
     token = jwt.sign(
       { userId: existingUser.id, email: existingUser.email },
       process.env.JWT_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     );
   } catch (err) {
     const error = new HttpError(`Error ${err.message}`, 500);
@@ -164,5 +132,5 @@ const login = async (req, res, next) => {
 
 exports.signup = signup;
 exports.login = login;
-exports.uploadImage = uploadImage;
-exports.resizeUserPhoto = resizeUserPhoto;
+exports.uploadUserImage = factory.upload;
+exports.resizeUserImage = factory.resizeImage('user');

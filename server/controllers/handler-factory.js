@@ -1,8 +1,42 @@
-const fs = require("fs");
+const fs = require('fs');
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const multer = require('multer');
+const sharp = require('sharp');
 
-const catchAsync = require("../utils/catch-async");
+const catchAsync = require('../utils/catch-async');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new HttpError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+const uploadImage = upload.single('image');
+
+const resizeImage = (docName) =>
+  catchAsync(async (req, res, next) => {
+    if (!req.image) return next();
+
+    req.image.filename = `${docName}-${Date.now()}.jpeg`;
+
+    await sharp(req.image.buffer)
+      .resize(500, 500)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`uploads/${docName}s/${req.image.filename}`);
+
+    next();
+  });
 
 const deleteOne = (Model, docName) =>
   catchAsync(async (req, res, next) => {
@@ -17,7 +51,7 @@ const deleteOne = (Model, docName) =>
     }
 
     res.status(204).json({
-      status: "success",
+      status: 'success',
       data: null,
     });
   });
@@ -37,7 +71,7 @@ const updateOne = (Model, docName) =>
     }
 
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         data: doc,
       },
@@ -49,7 +83,7 @@ const createOne = (Model) =>
     const doc = await Model.create(req.body);
 
     res.status(201).json({
-      status: "success",
+      status: 'success',
       data: {
         data: doc,
       },
@@ -72,7 +106,7 @@ const getOne = (Model, popOptions, docName) =>
       return next(error);
     }
 
-    res.status(200).json({ status: "success", data: { data: doc } });
+    res.status(200).json({ status: 'success', data: { data: doc } });
   });
 
 const getAll = (Model) =>
@@ -83,7 +117,7 @@ const getAll = (Model) =>
 
     res
       .status(200)
-      .json({ status: "success", results: doc.length, data: { data: doc } });
+      .json({ status: 'success', results: doc.length, data: { data: doc } });
   });
 
 exports.delete = deleteOne;
@@ -91,3 +125,5 @@ exports.update = updateOne;
 exports.create = createOne;
 exports.getOne = getOne;
 exports.getAll = getAll;
+exports.upload = uploadImage;
+exports.resizeImage = resizeImage;

@@ -1,17 +1,22 @@
-const express = require("express");
+const express = require('express');
 
-const movieController = require("../controllers/movie-controllers");
+const movieController = require('../controllers/movie-controllers');
 
 const router = express.Router();
 
-router.get("/favorites", movieController.getAllMovies);
+router.get('/favorites', movieController.getAllMovies);
 
-router.post("/favorite", movieController.createMovie);
+router.post(
+  '/favorite',
+  movieController.uploadMovieImage,
+  movieController.resizeMovieImage,
+  movieController.createMovie
+);
 
-router.patch("/:id/status", movieController.updateMovie);
+router.patch('/:id/status', movieController.updateMovie);
 
-router.delete("/:id", movieController.deleteMovie);
+router.delete('/:id', movieController.deleteMovie);
 
-router.get("/:id", movieController.getMovie);
+router.get('/:id', movieController.getMovie);
 
 module.exports = router;
