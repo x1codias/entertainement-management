@@ -8,9 +8,11 @@ import { IoLogoGameControllerB } from "react-icons/io";
 
 import styles from "./Welcome.module.css";
 
+// TODO: retoques no css (adicionar efeitos neon no resto)
+
 const Welcome = () => {
   return (
-    <section className={styles.container}>
+    <section className={styles["welcome--section"]}>
       <h1 className={`${styles.centered} ${styles.welcome}`}>
         Welcome to the ChillPlanner
       </h1>

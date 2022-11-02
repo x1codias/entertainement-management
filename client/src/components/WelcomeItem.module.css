@@ -1,9 +1,12 @@
 .item {
+  background-color: #214252;
+  border-radius: 2rem;
+  height: 10rem;
+  padding-top: 1rem;
 }
 
 .item-title {
   font-size: 2.4rem;
   font-weight: 700;
-  margin-bottom: 1.6rem;
   margin-top: 1.5rem;
 }

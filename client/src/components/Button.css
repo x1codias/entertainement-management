@@ -1,0 +1,43 @@
+.button {
+  width: 20rem;
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: 4px;
+  background: #214252;
+  color: inherit;
+  cursor: pointer;
+  margin-right: 1rem;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 1rem;
+  font-weight: 500;
+  font-size: 1.8rem;
+  padding: 1.2rem 2.4rem;
+  text-align: center;
+}
+
+.button--login,
+.button--login:link,
+.button--login:visited {
+  background: #af2d2d;
+  border-color: #af2d2d;
+}
+
+.button--login:hover,
+.button--login:active {
+  background: #f05454;
+  border-color: #f05454;
+}
+
+.button--signup,
+.button--signup:link,
+.button--signup:visited {
+  background: #f05454;
+  border-color: #f05454;
+}
+
+.button--signup:hover,
+.button--signup:active {
+  background: #ce6262;
+  border-color: #ce6262;
+}

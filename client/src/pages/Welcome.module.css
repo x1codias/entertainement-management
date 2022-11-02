@@ -1,15 +1,13 @@
-.container {
-  height: 100%;
-  padding: 0 3.2rem;
+.welcome--section {
+  max-width: 120rem;
+  height: 100vh;
+  padding: 35rem 3.2rem;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
 }
 
 .grid {
   display: grid;
-  column-gap: 6.4rem;
-  row-gap: 9.6rem;
+  column-gap: 4.5rem;
   margin-bottom: 4.5rem;
   margin-top: 4.5rem;
   text-align: center;
@@ -32,11 +30,4 @@
 .manage {
   font-size: 3.2rem;
   font-weight: 700;
-}
-
-.item-title {
-  font-size: 2.4rem;
-  font-weight: 700;
-  margin-bottom: 1.6rem;
-  margin-top: 1.5rem;
 }

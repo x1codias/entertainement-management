@@ -1,0 +1,128 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.auth {
+  max-width: 140rem;
+  margin: 8rem auto;
+  max-height: 50rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(6, 40, 61, 0.3);
+  border-radius: 2rem;
+  padding: 10rem 5rem;
+}
+
+.auth--have-account {
+  padding: 2rem 1rem;
+  margin-right: 10rem;
+}
+
+.auth--have-account__title {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+
+.auth--have-account__text {
+  font-size: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.auth--form {
+  height: 60rem;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  background-color: rgba(6, 40, 61, 1);
+  border-radius: 2rem;
+}
+
+.auth--form__login {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5rem;
+}
+
+.auth--form__title {
+  font-size: 3rem;
+  font-weight: 300;
+  color: #f05454;
+}
+
+.auth--form__group {
+  position: relative;
+  padding: 15px 0 0;
+  width: 95%;
+}
+
+.auth--form__input {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid #9b9b9b;
+  outline: 0;
+  font-size: 1.3rem;
+  color: #fff;
+  padding: 7px 0;
+  background: transparent;
+}
+
+.auth--form__input::placeholder {
+  color: transparent;
+}
+
+.auth--form__input:placeholder-shown ~ .auth--form__label {
+  font-size: 1.3rem;
+  cursor: text;
+  top: 20px;
+}
+
+.auth--form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #9b9b9b;
+}
+
+.auth--form__input:focus {
+  padding-bottom: 6px;
+  font-weight: 700;
+  border-width: 3px;
+  border-image: linear-gradient(to right, #f05454, #ce6262);
+  border-image-slice: 1;
+}
+
+.auth--form__input:focus ~ .auth--form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1rem;
+  color: #f05454;
+  font-weight: 700;
+}
+
+.auth--form__input:required,
+.auth--form__input:invalid {
+  box-shadow: none;
+}
+
+.auth--form__btn-group {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5rem;
+}
+
+.animate {
+  transition: transform 0.35s ease-in-out;
+}

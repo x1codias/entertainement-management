@@ -1,0 +1,74 @@
+.nav__container {
+  position: fixed;
+  width: 60px;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  background-color: #214252;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  cursor: pointer;
+  box-shadow: 4px 7px 10px rgba(6, 40, 61, 0.4);
+}
+
+.nav__container:hover {
+  width: 200px;
+}
+
+.nav {
+  list-style-type: none;
+  color: #d3d3d3;
+}
+
+.nav:first-child {
+  padding-top: 3.5rem;
+}
+
+.nav__item {
+  padding-bottom: 4rem;
+  padding-left: 1.5rem;
+}
+
+.nav__link {
+  position: relative;
+  display: block;
+  top: -35px;
+  padding-top: 1.3rem;
+  padding-left: 25px;
+  padding-right: 15px;
+  transition: all 0.3s ease;
+  margin-left: 25px;
+  margin-right: 10px;
+  text-decoration: none;
+  color: #d3d3d3;
+  font-weight: 100;
+  font-size: 1.35rem;
+}
+
+.nav__link:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 1rem;
+  background: linear-gradient(
+    circle at 94.02% 88.03%,
+    #f05454,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: all 0.5s ease;
+  z-index: -10;
+}
+
+.nav__link:hover .nav__link:after {
+  opacity: 1;
+}
+
+.nav__icon {
+  position: relative;
+  left: -25px;
+  cursor: pointer;
+}

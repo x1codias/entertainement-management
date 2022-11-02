@@ -11,6 +11,15 @@ Large: 1.8
 
 - Spacing system (px)
 2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+Theme retro with neon
+background color: #121212
+dark color: #214252
+primary color: #AF2D2D
+secondary color: #F05454
+terciary color: #CE6262
+light color:
+white color: #d3d3d3
 */
 
 * {
@@ -26,11 +35,12 @@ html {
 }
 
 body {
+  min-height: 100vh;
   font-family: "Rubik", sans-serif;
   line-height: 1;
   font-weight: 400;
+  padding: 1rem 0 0 0;
   box-sizing: border-box;
-  padding: 3rem;
   background-color: #121212;
-  color: #fdfdfd;
+  color: #d3d3d3;
 }
