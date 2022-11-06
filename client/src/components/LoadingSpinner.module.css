@@ -1,0 +1,76 @@
+.loader {
+  width: 150px;
+  height: 150px;
+}
+
+.loader__svg {
+  width: 90%;
+  fill: none;
+}
+
+.load {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 570;
+  stroke-width: 20px;
+}
+
+.load.one {
+  stroke: #8ebcd2;
+  animation: load 1.5s infinite;
+}
+
+.load.two {
+  stroke: #4386a6;
+  animation: load 1.5s infinite;
+  animation-delay: 0.1s;
+}
+
+.load.three {
+  stroke: #214252;
+  animation: load 1.5s infinite;
+  animation-delay: 0.2s;
+}
+
+.point {
+  animation: bounce 1s infinite ease-in-out;
+}
+
+.point.one {
+  fill: #8ebcd2;
+  animation-delay: 0s;
+}
+
+.point.two {
+  fill: #4386a6;
+  animation-delay: 0.1s;
+}
+
+.point.three {
+  fill: #214252;
+  animation-delay: 0.2s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes load {
+  0% {
+    stroke-dashoffset: 570;
+  }
+
+  50% {
+    stroke-dashoffset: 530;
+  }
+
+  100% {
+    stroke-dashoffset: 570;
+    transform: rotate(360deg);
+  }
+}

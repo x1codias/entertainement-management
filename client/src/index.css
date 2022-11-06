@@ -13,12 +13,13 @@ Large: 1.8
 2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
 
 Theme retro with neon
-background color: #121212
-dark color: #214252
-primary color: #AF2D2D
-secondary color: #F05454
-terciary color: #CE6262
-light color:
+black color: #121212
+blue: #214252
+light blue 1:#4386a6  
+light blue 2: #8ebcd2
+red: #AF2D2D
+light red 1: #F05454
+light red 2: #CE6262
 white color: #d3d3d3
 */
 
@@ -36,11 +37,11 @@ html {
 
 body {
   min-height: 100vh;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   line-height: 1;
   font-weight: 400;
   padding: 1rem 0 0 0;
   box-sizing: border-box;
-  background-color: #121212;
+  background-color: #444;
   color: #d3d3d3;
 }

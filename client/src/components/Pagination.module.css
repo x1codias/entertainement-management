@@ -1,0 +1,39 @@
+.container {
+  padding-left: 30rem;
+  padding-right: 30rem;
+  padding-bottom: 5rem;
+  text-align: center;
+}
+
+.pageNumbers {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pageNumbers li {
+  padding: 10px;
+  border: 1px solid #214252;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pageNumbers li:hover {
+  background-color: #214252;
+}
+
+.active {
+  background-color: #214252;
+}
+
+.pageNumbers li button {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.pageNumbers li button:focus {
+  outline: 0;
+}
