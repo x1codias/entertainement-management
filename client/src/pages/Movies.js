@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import Card from '../components/Card';
 import Grid from '../components/Grid';
@@ -8,7 +9,10 @@ import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
 
+// TODO: pagination on url
+
 const Movies = () => {
+  const location = useLocation();
   const [loadedMovies, setLoadedMovies] = useState([]);
   const { inputText, changeHandler } = useSearch();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -56,6 +60,8 @@ const Movies = () => {
     return (
       <Card
         key={movie.id}
+        page={location.pathname}
+        id={movie.id}
         poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
         title={movie.title}
         description={movie.overview}
@@ -63,6 +69,8 @@ const Movies = () => {
       />
     );
   });
+
+  console.log(movies);
 
   return (
     <Fragment>

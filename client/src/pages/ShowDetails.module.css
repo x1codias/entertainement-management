@@ -1,0 +1,443 @@
+/*
+genres:
+  -Action - #DD5353
+  -Adventure - #FD841F
+  -Animation - #F0FF42
+  -Comedy - #FCE700
+  -Crime - #50577A
+  -Documentary - tan
+  -Drama - beige
+  -Family - #EAEAEA
+  -Fantasy - #3B3486
+  -History -  #9E7676
+  -Horror - #432C7A
+  -Music - #EB6440
+  -Mystery - #251B37
+  -Romance - #FFB9B9
+  -Science Fiction - #5837D0
+  -Thriller - #FFFAE7
+  -TV Movie - #82CD47
+  -War - #D2001A
+  -Western - #9F8772
+
+  ratings:
+    - 0-34: #CF0A0A
+    - 35-49: #FF5B00
+    - 50-64: #FFDE00
+    - 65-79: #82954B
+    - 80-100: #7DCE13
+*/
+
+/******************** Loading Spinner **************************/
+
+.center {
+  width: 100%;
+  height: 100%;
+  margin-top: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/******************** Page Styling **************************/
+
+.details__container {
+  width: 80%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.details__img {
+  display: block;
+  width: 100vw;
+  height: 40%;
+  margin-left: -15rem;
+  margin-top: -13rem;
+  z-index: -1;
+  text-align: center;
+  overflow-y: hidden;
+  position: relative;
+  mask-image: linear-gradient(to top, rgba(68, 68, 68, 0), rgba(68, 68, 68, 1));
+}
+
+.details__img img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  mask-image: linear-gradient(to top, rgba(68, 68, 68, 0), rgba(68, 68, 68, 1));
+}
+
+.details__title {
+  font-weight: 900;
+  font-size: 4rem;
+  margin-top: -15rem;
+}
+
+.details__container h2 {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.details__description {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.container--small {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.container--genres {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1.7rem;
+}
+
+.details__genre {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 2rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1rem 2.4rem;
+  transition: background-color 400ms, transform 400ms;
+}
+
+.details__genre:hover {
+  transform: scale(1.1);
+}
+
+.details__rating {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 1rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1.5rem;
+  transition: background-color 400ms, transform 400ms;
+}
+
+.details__rating:hover {
+  transform: scale(1.1);
+}
+
+.details__plataforms {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.details__plataform img {
+  border-radius: 0.5rem;
+  transition: transform 400ms;
+}
+
+.details__plataform:hover img {
+  transform: scale(1.1);
+}
+
+.cast__image img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.details__similar {
+  display: flex;
+}
+
+.details__episodes {
+  display: flex;
+  flex-direction: column;
+}
+
+/******************** Genres **************************/
+
+.action-adventure {
+  color: #e14d2a;
+  border-color: #e14d2a;
+}
+
+.action-adventure:hover {
+  color: #444;
+  background-color: #e14d2a;
+}
+
+.animation {
+  color: #f0ff42;
+  border-color: #f0ff42;
+}
+
+.animation:hover {
+  color: #444;
+  background-color: #f0ff42;
+}
+
+.comedy {
+  color: #fce700;
+  border-color: #fce700;
+}
+
+.comedy:hover {
+  color: #444;
+  background-color: #fce700;
+}
+
+.crime {
+  color: #50577a;
+  border-color: #50577a;
+}
+
+.crime:hover {
+  color: #444;
+  background-color: #50577a;
+}
+
+.documentary {
+  color: tan;
+  border-color: tan;
+}
+
+.documentary:hover {
+  color: #444;
+  background-color: tan;
+}
+
+.drama {
+  color: beige;
+  border-color: beige;
+}
+
+.drama:hover {
+  color: #444;
+  background-color: beige;
+}
+
+.family {
+  color: #eaeaea;
+  border-color: #eaeaea;
+}
+
+.family:hover {
+  color: #444;
+  background-color: #eaeaea;
+}
+
+.kids {
+  color: #fedb39;
+  border-color: #fedb39;
+}
+
+.kids:hover {
+  color: #444;
+  background-color: #fedb39;
+}
+
+.fantasy {
+  color: #3b3486;
+  border-color: #3b3486;
+}
+
+.fantasy:hover {
+  color: #444;
+  background-color: #3b3486;
+}
+
+/*.history {
+  color: #9e7676;
+  border-color: #9e7676;
+}
+
+.history:hover {
+  color: #444;
+  background-color: #9e7676;
+}*/
+
+/*.horror {
+  color: #432c7a;
+  border-color: #432c7a;
+}
+
+.horror:hover {
+  color: #444;
+  background-color: #432c7a;
+}*/
+
+/*.music {
+  color: #eb6440;
+  border-color: #eb6440;
+}
+
+.music:hover {
+  color: #444;
+  background-color: #eb6440;
+}*/
+
+.mystery {
+  color: #251b37;
+  border-color: #251b37;
+}
+
+.mystery:hover {
+  color: #444;
+  background-color: #251b37;
+}
+
+.news {
+  color: #0d4c92;
+  border-color: #0d4c92;
+}
+
+.news:hover {
+  color: #444;
+  background-color: #0d4c92;
+}
+
+.reality {
+  color: #ff6464;
+  border-color: #ff6464;
+}
+
+.reality:hover {
+  color: #444;
+  background-color: #ff6464;
+}
+
+/*.romance {
+  color: #ffb9b9;
+  border-color: #ffb9b9;
+}
+
+.romance:hover {
+  color: #444;
+  background-color: #ffb9b9;
+}*/
+
+.sci-fi-fantasy {
+  color: #3f0071;
+  border-color: #3f0071;
+}
+
+.sci-fi-fantasy:hover {
+  color: #444;
+  background-color: #3f0071;
+}
+
+/*.thriller {
+  color: #fffae7;
+  border-color: #fffae7;
+}
+
+.thriller:hover {
+  color: #444;
+  background-color: #fffae7;
+}*/
+
+.soap {
+  color: #ff8787;
+  border-color: #ff8787;
+}
+
+.soap:hover {
+  color: #444;
+  background-color: #ff8787;
+}
+
+.talk {
+  color: #59c1bd;
+  border-color: #59c1bd;
+}
+
+.talk:hover {
+  color: #444;
+  background-color: #59c1bd;
+}
+
+.war-politics {
+  color: #d2001a;
+  border-color: #d2001a;
+}
+
+.war-politics:hover {
+  color: #444;
+  background-color: #d2001a;
+}
+
+.western {
+  color: #9f8772;
+  border-color: #9f8772;
+}
+
+.western:hover {
+  color: #444;
+  background-color: #9f8772;
+}
+
+/******************** Ratings **************************/
+
+.very-bad {
+  color: #cf0a0a;
+  border-color: #cf0a0a;
+}
+
+.very-bad:hover {
+  color: #444;
+  background-color: #cf0a0a;
+}
+
+.bad {
+  color: #ff5b00;
+  border-color: #ff5b00;
+}
+
+.bad:hover {
+  color: #444;
+  background-color: #ff5b00;
+}
+
+.mediocre {
+  color: #ffde00;
+  border-color: #ffde00;
+}
+
+.mediocre:hover {
+  color: #444;
+  background-color: #ffde00;
+}
+
+.good {
+  color: #82954b;
+  border-color: #82954b;
+}
+
+.good:hover {
+  color: #444;
+  background-color: #82954b;
+}
+
+.very-good {
+  color: #7dce13;
+  border-color: #7dce13;
+}
+
+.very-good:hover {
+  color: #444;
+  background-color: #7dce13;
+}

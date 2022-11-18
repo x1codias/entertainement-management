@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
+import { IconContext } from 'react-icons';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+
 import styles from './Pagination.module.css';
 
 const Pagination = (props) => {
@@ -28,15 +31,40 @@ const Pagination = (props) => {
     }
   });
 
+  if (props.gallery) {
+    return (
+      <Fragment>
+        {props.currentPage > 1 && (
+          <button onClick={props.onClickPrev}>
+            <IconContext.Provider value={{ size: '2.4rem' }}>
+              <FaChevronLeft />
+            </IconContext.Provider>
+          </button>
+        )}
+        {props.children}
+        {props.currentPage !== props.numberOfPages && (
+          <button onClick={props.onClickNext}>
+            <IconContext.Provider value={{ size: '2.4rem' }}>
+              <FaChevronRight />
+            </IconContext.Provider>
+          </button>
+        )}
+      </Fragment>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <ul className={styles.pageNumbers}>
-        <li>
-          <button onClick={props.onClickPrev}>Prev</button>
-        </li>
+        {props.currentPage !== 1 && (
+          <li>
+            <button onClick={props.onClickPrev}>Prev</button>
+          </li>
+        )}
         {props.minPageNumberLimit >= 1 ? <li>&hellip;</li> : null}
         {renderPageNumbers}
         {pages.length > props.maxPageNumberLimit ? <li>&hellip;</li> : null}
+
         <li>
           <button onClick={props.onClickNext}>Next</button>
         </li>

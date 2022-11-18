@@ -7,8 +7,10 @@ import { useHttpClient } from '../hooks/http-hook';
 import { useSearch } from '../hooks/search-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import Pagination from '../components/Pagination';
+import { useLocation } from 'react-router-dom';
 
 const Books = () => {
+  const location = useLocation();
   const [loadedBooks, setLoadedBooks] = useState([]);
   const { inputText, changeHandler } = useSearch();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -44,21 +46,25 @@ const Books = () => {
     fetchBooks();
   }, [sendRequest, inputText, setDataLength, setTotalPages, offset]);
 
-  const books = loadedBooks.map((book) => {
-    return (
-      <Card
-        key={book.id}
-        poster={
-          book.volumeInfo.imageLinks === undefined
-            ? ''
-            : book.volumeInfo.imageLinks.thumbnail
-        }
-        title={book.volumeInfo.title}
-        description={book.volumeInfo.description}
-        isLoading={isLoading}
-      />
-    );
-  });
+  const books =
+    loadedBooks !== undefined &&
+    loadedBooks.map((book) => {
+      return (
+        <Card
+          key={book.id}
+          page={location.pathname}
+          id={book.id}
+          poster={
+            book.volumeInfo.imageLinks === undefined
+              ? ''
+              : book.volumeInfo.imageLinks.thumbnail
+          }
+          title={book.volumeInfo.title}
+          description={book.volumeInfo.description}
+          isLoading={isLoading}
+        />
+      );
+    });
 
   return (
     <Fragment>

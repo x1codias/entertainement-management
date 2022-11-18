@@ -7,8 +7,10 @@ import Pagination from '../components/Pagination';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
+import { useLocation } from 'react-router-dom';
 
 const Shows = () => {
+  const location = useLocation();
   const [loadedShows, setLoadedShows] = useState([]);
   const { inputText, changeHandler } = useSearch();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -63,6 +65,8 @@ const Shows = () => {
     return (
       <Card
         key={show.id}
+        page={location.pathname}
+        id={show.id}
         poster={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
         title={show.name}
         description={show.overview}

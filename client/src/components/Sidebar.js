@@ -8,63 +8,77 @@ import { GiOpenBook } from 'react-icons/gi';
 import { IoLogoGameControllerB } from 'react-icons/io';
 
 import styles from './Sidebar.module.css';
+import { Fragment } from 'react';
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   return (
-    <nav className={styles['nav__container']}>
-      <ul className={styles.nav}>
-        <li className={styles['nav__item']}>
-          <IconContext.Provider
-            value={{ size: '26px', className: 'nav__icon' }}
-          >
-            <RiMovie2Fill />
-          </IconContext.Provider>
-          <NavLink className={styles['nav__link']} to="/movies">
-            Movies
-          </NavLink>
-        </li>
-        <li className={styles['nav__item']}>
-          <IconContext.Provider
-            value={{ size: '26px', className: 'nav__icon' }}
-          >
-            <BiMoviePlay />
-          </IconContext.Provider>
-          <NavLink className={styles['nav__link']} to="/shows">
-            Shows
-          </NavLink>
-        </li>
-        <li className={styles['nav__item']}>
-          <IconContext.Provider
-            value={{ size: '26px', className: 'nav__icon' }}
-          >
-            <AiOutlineTaobao />
-          </IconContext.Provider>
-          <NavLink className={styles['nav__link']} to="/animes">
-            Animes
-          </NavLink>
-        </li>
-        <li className={styles['nav__item']}>
-          <IconContext.Provider
-            value={{ size: '26px', className: 'nav__icon' }}
-          >
-            <GiOpenBook />
-          </IconContext.Provider>
-          <NavLink className={styles['nav__link']} to="/books">
-            Books
-          </NavLink>
-        </li>
-        <li className={styles['nav__item']}>
-          <IconContext.Provider
-            value={{ size: '26px', className: 'nav__icon' }}
-          >
-            <IoLogoGameControllerB />
-          </IconContext.Provider>
-          <NavLink className={styles['nav__link']} to="/games">
-            Games
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
+    <Fragment>
+      <nav className={styles['nav__container']}>
+        <ul className={styles.nav}>
+          <li className={styles['nav__item']}>
+            <NavLink className={styles['nav__link']} to={`/movies?page=1`}>
+              <svg>
+                <IconContext.Provider
+                  value={{ size: '26px', className: 'nav__icon' }}
+                >
+                  <RiMovie2Fill />
+                </IconContext.Provider>
+              </svg>
+              <span>Movies</span>
+            </NavLink>
+          </li>
+          <li className={styles['nav__item']}>
+            <NavLink className={styles['nav__link']} to="/shows">
+              <svg>
+                <IconContext.Provider
+                  value={{ size: '26px', className: 'nav__icon' }}
+                >
+                  <BiMoviePlay />
+                </IconContext.Provider>
+              </svg>
+              <span>Shows</span>
+            </NavLink>
+          </li>
+          <li className={styles['nav__item']}>
+            <NavLink className={styles['nav__link']} to="/animes">
+              <svg>
+                <IconContext.Provider
+                  value={{ size: '26px', className: 'nav__icon' }}
+                >
+                  <AiOutlineTaobao />
+                </IconContext.Provider>
+              </svg>
+              <span>Animes</span>
+            </NavLink>
+          </li>
+          <li className={styles['nav__item']}>
+            <NavLink className={styles['nav__link']} to="/books">
+              <svg>
+                <IconContext.Provider
+                  value={{ size: '26px', className: 'nav__icon' }}
+                >
+                  <GiOpenBook />
+                </IconContext.Provider>
+              </svg>
+              <span>Books</span>
+            </NavLink>
+          </li>
+          <li className={styles['nav__item']}>
+            <NavLink className={styles['nav__link']} to="/games">
+              <svg>
+                <IconContext.Provider
+                  value={{ size: '26px', className: 'nav__icon' }}
+                >
+                  <IoLogoGameControllerB />
+                </IconContext.Provider>
+              </svg>
+              <span>Games</span>
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+      <main className={styles.wrapper}>{props.children}</main>
+    </Fragment>
   );
 };
 

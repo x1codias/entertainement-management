@@ -7,8 +7,10 @@ import Pagination from '../components/Pagination';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
+import { useLocation } from 'react-router-dom';
 
 const Games = () => {
+  const location = useLocation();
   const [loadedGames, setLoadedGames] = useState([]);
   const { inputText, changeHandler } = useSearch();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -30,7 +32,7 @@ const Games = () => {
       if (inputText === '') {
         try {
           const responseData = await sendRequest(
-            `${process.env.REACT_APP_RAWG_BASE_URL}?page=${currentPage}&ordering=-metacritic,released&&key=${process.env.REACT_APP_RAWG_API_KEY}`
+            `${process.env.REACT_APP_RAWG_BASE_URL}?page=${currentPage}&ordering=-metacritic,released&key=${process.env.REACT_APP_RAWG_API_KEY}`
           );
 
           console.log(responseData);
@@ -57,7 +59,10 @@ const Games = () => {
   const games = loadedGames.map((game) => {
     return (
       <Card
+        game
         key={game.id}
+        page={location.pathname}
+        id={game.id}
         poster={game.background_image}
         title={game.name}
         description={game.overview}

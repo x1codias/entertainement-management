@@ -1,3 +1,205 @@
+/********************* Team ***********************/
+
+.creator {
+  position: relative;
+  width: 320px;
+  height: 450px;
+  border-radius: 2rem;
+  overflow: hidden;
+}
+
+.background-container {
+  transition: all 0.3s ease-out;
+  display: inline-block;
+  position: relative;
+  height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0.4;
+  scale: 1.15;
+}
+
+.background-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.creator:hover .background-container img {
+  transform: scale(0.9);
+  overflow: visible;
+}
+
+.photo-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 100%;
+  height: 220px;
+  transition: 0.5s;
+}
+
+.creator:hover .photo-container {
+  top: 0%;
+  transform: translateY(0%);
+}
+
+.photo-container img {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-45%, -50%);
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  transition: scale 500ms;
+}
+
+.creator:hover .photo-container img {
+  scale: 0.7;
+}
+
+.content {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  transition: 1s;
+  z-index: 10;
+}
+
+.creator:hover .content {
+  height: 220px;
+}
+
+.name {
+  position: relative;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.positions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 20px;
+  transition: 0.5s;
+  opacity: 0;
+  visibility: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: transparent;
+}
+
+.creator:hover .content .positions {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.5s;
+}
+
+.position {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  margin: 2rem 0 2rem 0;
+}
+
+.position:not(:last-of-type) {
+  margin-right: 1rem;
+}
+
+.known-for--container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 20px;
+  transition: 0.5s;
+  opacity: 0;
+  visibility: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: transparent;
+}
+
+.creator:hover .content .known-for--container {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.7s;
+}
+
+.known-for {
+  text-align: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  list-style: none;
+}
+
+/********************* Achievments ***********************/
+
+.achievment {
+  position: relative;
+  width: 100%;
+
+  border-radius: 2rem;
+  overflow: hidden;
+  background-color: #888;
+  display: flex;
+  box-shadow: 0 0.25rem 0.25rem rgba(255, 255, 255, 0.1),
+    0 0 1rem rgba(170, 170, 170, 1);
+  transition: scale 400ms;
+}
+
+.achievment:hover {
+  scale: 0.95;
+}
+
+.achievment__img img {
+  width: 10rem;
+  height: 100%;
+  object-fit: cover;
+}
+
+.achievment__content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.achievment__percentage {
+  display: inline-block;
+  width: fit-content;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+}
+
+/********************* Episodes ***********************/
+
+.episode {
+}
+
+.episode__img img {
+  width: 5rem;
+  height: 5rem;
+}
+
+/********************* Card ***********************/
+
 .card {
   grid-column-end: span 3;
   display: flex;
@@ -5,13 +207,13 @@
   position: relative;
   background: #333;
   width: 300px;
-  height: 42rem;
+  height: 40rem;
   border-radius: 6px;
-  padding: 2rem;
   color: #aaa;
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2), 0 0 1rem rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  transition: 0.4s ease-out;
+  transition: all 0.4s ease-out;
+  align-items: center;
 }
 
 .card:hover {
@@ -19,46 +221,98 @@
   transition: 0.4s ease-out;
 }
 
+.card:hover .card__image-container:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: inherit;
+  content: ' ';
+}
+
 .card__image-container {
-  width: 100%;
-  margin: -5rem -5rem 2rem -1rem;
+  transition: 0.3s ease-out;
+  display: inline-block;
   position: relative;
+  overflow: hidden;
+  height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .card__image-container img {
-  max-width: 100%;
-  /*position: absolute;*/
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
   opacity: 0;
-  animation: ImageFadeIn 0.8s 1.4s forwards;
+  animation: ImageFadeIn 0.8s 0.6s forwards;
+  object-fit: cover;
+  transition: transform 0.4s;
 }
 
 .card__content {
-  line-height: 1.5;
-  margin-top: 2rem;
+  position: absolute;
+  line-height: 1.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
   opacity: 0;
-  animation: ContentFadeIn 0.8s 1.6s forwards;
+  transition: all 0.3s;
+}
+
+.card__game--content {
+  justify-content: center;
+  gap: 5rem;
+}
+
+.card__title {
+  padding: 0 2rem;
+  width: 100%;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.card__description {
   font-size: 1.2rem;
+  width: 90%;
+  height: 30%;
+  overflow-y: auto;
+  border-radius: 10px;
 }
 
-.card-title {
-  color: #d3d3d3;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  margin-bottom: 1rem;
+.card__description::-webkit-scrollbar {
+  width: 12px;
 }
 
-@keyframes ContentFadeIn {
-  0% {
-    transform: translateY(-1rem);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.card__description::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #aaa;
+}
+
+.card__description::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #214252;
+}
+
+.card:hover .card__content {
+  background-color: rgba(51, 51, 51, 0.9);
+  opacity: 1;
+}
+
+.card__button--container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-bottom: -1rem;
 }
 
 @keyframes ImageFadeIn {

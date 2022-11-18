@@ -7,8 +7,10 @@ import Pagination from '../components/Pagination';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
+import { useLocation } from 'react-router-dom';
 
 const Animes = () => {
+  const location = useLocation();
   const [loadedAnimes, setLoadedAnimes] = useState([]);
   const { inputText, changeHandler } = useSearch();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -31,8 +33,10 @@ const Animes = () => {
       if (inputText === '') {
         try {
           const responseData = await sendRequest(
-            `${process.env.REACT_APP_KITSU_BASE_URL}?page[limit]=20&page[offset]=${offset}&sort=popularityRank`
+            `${process.env.REACT_APP_KITSU_BASE_URL}anime?page[limit]=20&page[offset]=${offset}&sort=popularityRank`
           );
+
+          console.log(responseData);
 
           setDataLength(responseData.meta.count);
           setTotalPages(Math.round((responseData.meta.count + 20 - 1) / 20));
@@ -41,7 +45,7 @@ const Animes = () => {
       } else {
         try {
           const responseData = await sendRequest(
-            `${process.env.REACT_APP_KITSU_BASE_URL}?page[limit]=20&page[offset]=${offset}&sort=popularityRank&filter[text]=${inputText}`
+            `${process.env.REACT_APP_KITSU_BASE_URL}anime?page[limit]=20&page[offset]=${offset}&sort=popularityRank&filter[text]=${inputText}`
           );
 
           console.log(responseData);
@@ -59,6 +63,8 @@ const Animes = () => {
     return (
       <Card
         key={anime.id}
+        page={location.pathname}
+        id={anime.id}
         poster={anime.attributes.posterImage.original}
         title={anime.attributes.canonicalTitle}
         description={anime.attributes.description}

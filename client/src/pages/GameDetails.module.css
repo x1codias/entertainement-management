@@ -1,0 +1,501 @@
+.details {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding-right: 20rem;
+}
+
+.background {
+  width: 270rem;
+  height: 60rem;
+  margin-left: -10rem;
+  margin-top: -10rem;
+  position: relative;
+  z-index: -1;
+}
+
+.background::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(51, 51, 51, 0),
+    rgba(68, 68, 68, 1)
+  );
+  width: 100%;
+  height: 100%;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  margin-top: -30rem;
+  z-index: 2;
+  font-size: 1.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  width: 100%;
+}
+
+.title {
+  font-size: 7rem;
+  font-weight: 900;
+}
+
+.title__content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
+}
+
+.platforms {
+  display: flex;
+  gap: 1rem;
+}
+
+.released {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+}
+
+.playtime {
+  font-weight: 700;
+}
+
+.tags {
+  display: inline-block;
+  width: 100%;
+  margin-left: -1rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: background-color 400ms, transform 400ms;
+  margin: 1rem 0 0 1rem;
+}
+
+.tag:hover {
+  transform: scale(1.1);
+  color: #444;
+  background-color: #d3d3d3;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.description {
+  line-height: 2.4rem;
+  text-align: start;
+}
+
+.stores {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  gap: 3rem;
+}
+
+.store {
+  padding: 1rem 2rem;
+  border: 2px solid #d3d3d3;
+  border-radius: 10%;
+  text-align: center;
+  transition: background-color 400ms, transform 400ms;
+  width: fit-content;
+  height: fit-content;
+}
+
+.store:hover {
+  transform: scale(1.1);
+  background-color: #d3d3d3;
+  color: #444;
+}
+
+.store svg {
+  transition: fill 400ms;
+}
+
+.store:hover svg {
+  fill: #444;
+}
+
+.xbox360 {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  gap: 0.5rem;
+}
+
+.genres {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+}
+
+.genre {
+  font-weight: 700;
+  border-radius: 2rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1rem 2.4rem;
+  transition: background-color 400ms, transform 400ms;
+}
+
+.genre:hover {
+  transform: scale(1.1);
+}
+
+.row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rating {
+  width: fit-content;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 1rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1.5rem 1.5rem;
+  transition: background-color 400ms, transform 400ms;
+}
+
+.rating:hover {
+  transform: scale(1.1);
+}
+
+.release-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.release-date span {
+  width: fit-content;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.creators {
+  display: flex;
+  justify-content: space-around;
+}
+
+.developer {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: scale 400ms;
+  width: fit-content;
+}
+
+.developer:hover {
+  scale: 1.1;
+}
+
+.publisher {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: scale 400ms;
+  width: fit-content;
+}
+
+.publisher:hover {
+  scale: 1.1;
+}
+
+.achievments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 1rem;
+  column-gap: 2rem;
+}
+
+/****************** Genres ********************/
+
+.action {
+  color: #dd5353;
+  border-color: #dd5353;
+}
+
+.action:hover {
+  color: #444;
+  background-color: #dd5353;
+}
+
+.indie {
+  color: #3b3486;
+  border-color: #3b3486;
+}
+
+.indie:hover {
+  color: #444;
+  background-color: #3b3486;
+}
+
+.adventure {
+  color: #fd841f;
+  border-color: #fd841f;
+}
+
+.adventure:hover {
+  color: #444;
+  background-color: #fd841f;
+}
+
+.role-playing-games-rpg {
+  color: #e6b325;
+  border-color: #e6b325;
+}
+
+.role-playing-games-rpg:hover {
+  color: #444;
+  background-color: #e6b325;
+}
+
+.strategy {
+  color: #243a73;
+  border-color: #243a73;
+}
+
+.strategy:hover {
+  color: #444;
+  background-color: #243a73;
+}
+
+.shooter {
+  color: #b73e3e;
+  border-color: #b73e3e;
+}
+
+.shooter:hover {
+  color: #444;
+  background-color: #b73e3e;
+}
+
+.casual {
+  color: #a8e890;
+  border-color: #a8e890;
+}
+
+.casual:hover {
+  color: #444;
+  background-color: #a8e890;
+}
+
+.simulation {
+  color: #905e96;
+  border-color: #905e96;
+}
+
+.simulation:hover {
+  color: #444;
+  background-color: #905e96;
+}
+
+.puzzle {
+  color: #ede4e0;
+  border-color: #ede4e0;
+}
+
+.puzzle:hover {
+  color: #444;
+  background-color: #ede4e0;
+}
+
+.arcade {
+  color: #80489c;
+  border-color: #80489c;
+}
+
+.arcade:hover {
+  color: #444;
+  background-color: #80489c;
+}
+
+.platformer {
+  color: #fecd70;
+  border-color: #fecd70;
+}
+
+.platformer:hover {
+  color: #444;
+  background-color: #fecd70;
+}
+
+.racing {
+  color: #fce700;
+  border-color: #fce700;
+}
+
+.racing:hover {
+  color: #444;
+  background-color: #fce700;
+}
+
+.massively-multiplayer {
+  color: #ffe15d;
+  border-color: #ffe15d;
+}
+
+.massively-multiplayer:hover {
+  color: #444;
+  background-color: #ffe15d;
+}
+
+.sports {
+  color: #6fedd6;
+  border-color: #6fedd6;
+}
+
+.sports:hover {
+  color: #444;
+  background-color: #6fedd6;
+}
+
+.fighting {
+  color: #cc3636;
+  border-color: #cc3636;
+}
+
+.fighting:hover {
+  color: #444;
+  background-color: #cc3636;
+}
+
+.family {
+  color: #eaeaea;
+  border-color: #eaeaea;
+}
+
+.family:hover {
+  color: #444;
+  background-color: #eaeaea;
+}
+
+.board-games {
+  color: #e14d2a;
+  border-color: #e14d2a;
+}
+
+.board-games:hover {
+  color: #444;
+  background-color: #e14d2a;
+}
+
+.educational {
+  color: #9e7676;
+  border-color: #9e7676;
+}
+
+.educational:hover {
+  color: #444;
+  background-color: #9e7676;
+}
+
+.card {
+  color: #9f8772;
+  border-color: #9f8772;
+}
+
+.card:hover {
+  color: #444;
+  background-color: #9f8772;
+}
+
+/****************** Ratings ********************/
+
+.very-bad {
+  color: #cf0a0a;
+  border-color: #cf0a0a;
+}
+
+.very-bad:hover {
+  color: #444;
+  background-color: #cf0a0a;
+}
+
+.bad {
+  color: #ff5b00;
+  border-color: #ff5b00;
+}
+
+.bad:hover {
+  color: #444;
+  background-color: #ff5b00;
+}
+
+.mediocre {
+  color: #ffde00;
+  border-color: #ffde00;
+}
+
+.mediocre:hover {
+  color: #444;
+  background-color: #ffde00;
+}
+
+.good {
+  color: #82954b;
+  border-color: #82954b;
+}
+
+.good:hover {
+  color: #444;
+  background-color: #82954b;
+}
+
+.very-good {
+  color: #7dce13;
+  border-color: #7dce13;
+}
+
+.very-good:hover {
+  color: #444;
+  background-color: #7dce13;
+}

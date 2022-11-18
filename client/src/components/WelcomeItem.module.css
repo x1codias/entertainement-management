@@ -3,6 +3,10 @@
   border-radius: 2rem;
   height: 10rem;
   padding-top: 1rem;
+  box-shadow: 0 0 6px rgba(33, 66, 82, 0.98), 0 0 30px rgba(202, 228, 225, 0.42),
+    0 0 12px rgba(33, 66, 82, 0.58), 0 0 12px rgba(33, 66, 82, 0.7),
+    0 0 22px rgba(33, 66, 82, 0.84), 0 0 38px rgba(33, 66, 82, 0.88),
+    0 0 60px rgba(33, 66, 82, 1);
 }
 
 .item-title {

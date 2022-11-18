@@ -3,11 +3,12 @@ import { useState } from 'react';
 export const usePagination = (type) => {
   let [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  let [pageNumberLimit, setPageNumberLimit] = useState(10);
+  let [pageNumberLimit] = useState(10);
   let [maxPageNumberLimit, setMaxPageNumberLimit] = useState(10);
   let [minPageNumberLimit, setMinPageNumberLimit] = useState(0);
   const [dataLength, setDataLength] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [resultsLimit] = useState(5);
 
   let pageHandler = (e) => {};
 
@@ -88,6 +89,28 @@ export const usePagination = (type) => {
       setDataLength,
       setTotalPages,
       pageHandler,
+      prevHandler,
+      nextHandler,
+    };
+  }
+
+  if (type === 'gallery') {
+    const indexOfLastItem = currentPage * resultsLimit;
+    const indexOfFirstItem = indexOfLastItem - resultsLimit;
+
+    prevHandler = () => {
+      setCurrentPage(currentPage - 1);
+    };
+
+    nextHandler = () => {
+      setCurrentPage(currentPage + 1);
+    };
+
+    return {
+      resultsLimit,
+      indexOfFirstItem,
+      indexOfLastItem,
+      currentPage,
       prevHandler,
       nextHandler,
     };

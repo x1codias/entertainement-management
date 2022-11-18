@@ -37,10 +37,11 @@ html {
 
 body {
   min-height: 100vh;
+  min-width: 100vw;
   font-family: 'Open Sans', sans-serif;
   line-height: 1;
   font-weight: 400;
-  padding: 1rem 0 0 0;
+  padding: 1.7rem 0 0 0;
   box-sizing: border-box;
   background-color: #444;
   color: #d3d3d3;
