@@ -37,3 +37,33 @@
 .pageNumbers li button:focus {
   outline: 0;
 }
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  cursor: pointer;
+  border-radius: 50%;
+  width: fit-content;
+  height: fit-content;
+  border: 2px solid #d3d3d3;
+  background-color: transparent;
+  transition: background-color 400ms, scale 400ms;
+}
+
+.btn:hover {
+  background-color: #d3d3d3;
+  scale: 1.1;
+}
+
+.btn span {
+  padding: 1rem;
+}
+
+.btn svg {
+  fill: #d3d3d3;
+}
+
+.btn:hover svg {
+  fill: #444;
+}

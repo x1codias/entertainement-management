@@ -95,21 +95,18 @@ export const usePagination = (type) => {
   }
 
   if (type === 'gallery') {
-    const indexOfLastItem = currentPage * resultsLimit;
-    const indexOfFirstItem = indexOfLastItem - resultsLimit;
-
-    prevHandler = () => {
+    prevHandler = (e) => {
+      e.preventDefault();
       setCurrentPage(currentPage - 1);
     };
 
-    nextHandler = () => {
+    nextHandler = (e) => {
+      e.preventDefault();
       setCurrentPage(currentPage + 1);
     };
 
     return {
       resultsLimit,
-      indexOfFirstItem,
-      indexOfLastItem,
       currentPage,
       prevHandler,
       nextHandler,

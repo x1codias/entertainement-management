@@ -1,4 +1,5 @@
 import styles from './Gallery.module.css';
+import Videos from './Videos';
 
 const Gallery = (props) => {
   return (
@@ -19,26 +20,7 @@ const Gallery = (props) => {
             </div>
           );
         })}
-      {props.video &&
-        props.videos &&
-        props.videos.map((video, index) => {
-          return (
-            <div
-              key={index}
-              className={`${styles.gallery__card} ${styles.video}`}
-            >
-              <iframe
-                src={
-                  video.key
-                    ? `https://www.youtube.com/embed/${video.key}`
-                    : video.data.max
-                }
-                title="Youtube video"
-                frameBorder="0"
-              />
-            </div>
-          );
-        })}
+      {props.video && <Videos videos={props.videos} />}
     </div>
   );
 };

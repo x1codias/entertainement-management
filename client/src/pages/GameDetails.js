@@ -29,7 +29,9 @@ import { AiFillWindows } from 'react-icons/ai';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Card from '../components/Card';
 import Gallery from '../components/Gallery';
+import Pagination from '../components/Pagination';
 import { useHttpClient } from '../hooks/http-hook';
+import { usePagination } from '../hooks/pagination-hook';
 
 import styles from './GameDetails.module.css';
 
@@ -43,16 +45,46 @@ const GameDetails = () => {
   const [loadedInstallments, setLoadedInstallments] = useState([]);
   const [loadedTeam, setLoadedTeam] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const {
+    currentPage: currentPageVideo,
+    prevHandler: prevHandlerVideo,
+    nextHandler: nextHandlerVideo,
+  } = usePagination('gallery');
+  const {
+    currentPage: currentPageImage,
+    prevHandler: prevHandlerImage,
+    nextHandler: nextHandlerImage,
+  } = usePagination('gallery');
+  const {
+    currentPage: currentPageTeam,
+    prevHandler: prevHandlerTeam,
+    nextHandler: nextHandlerTeam,
+  } = usePagination('gallery');
+  const {
+    currentPage: currentPageAchievments,
+    prevHandler: prevHandlerAchievments,
+    nextHandler: nextHandlerAchievments,
+  } = usePagination('gallery');
+  const {
+    currentPage: currentPageAdditions,
+    prevHandler: prevHandlerAdditions,
+    nextHandler: nextHandlerAdditions,
+  } = usePagination('gallery');
+  const {
+    currentPage: currentPageInstallments,
+    prevHandler: prevHandlerInstallments,
+    nextHandler: nextHandlerInstallments,
+  } = usePagination('gallery');
 
   useEffect(() => {
     const fetchGame = async () => {
       const urlGame = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}?key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlAchievments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/achievements?key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlVideos = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/movies?page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlImages = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/screenshots?page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlAdditions = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/additions?page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlInstallments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/game-series?page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlTeam = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/development-team?page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlAchievments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/achievements?page=${currentPageAchievments}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlVideos = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/movies?page=${currentPageVideo}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlImages = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/screenshots?page=${currentPageImage}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlAdditions = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/additions?page=${currentPageAdditions}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlInstallments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/game-series?page=${currentPageInstallments}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlTeam = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/development-team?page=${currentPageTeam}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
 
       try {
         const gameData = await sendRequest(urlGame);
@@ -81,7 +113,16 @@ const GameDetails = () => {
       } catch (err) {}
     };
     fetchGame();
-  }, [sendRequest, id]);
+  }, [
+    sendRequest,
+    id,
+    currentPageVideo,
+    currentPageImage,
+    currentPageAchievments,
+    currentPageAdditions,
+    currentPageInstallments,
+    currentPageTeam,
+  ]);
 
   const platforms =
     loadedGame.parent_platforms &&
@@ -216,36 +257,44 @@ const GameDetails = () => {
       );
     });
 
-  const htmlDecode = (content) => {
-    let e = document.createElement('div');
-    e.innerHTML = content;
-    return e.childNodes.length === 0 ? '' : e.childNodes[0].nodeValue;
-  };
+  const pc =
+    loadedGame.platforms &&
+    loadedGame.platforms.filter((platform) => platform.platform.id === 4);
 
   const requirements =
-    loadedGame.platforms &&
-    loadedGame.platforms.map((platform, index) => {
+    pc &&
+    pc.map((platform, index) => {
       return (
-        platform.platform.slug === 'pc' && (
-          <Fragment>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  htmlDecode(platform.requirements.minimum)
-                ),
-              }}
-            />
-            <div
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(
-                  htmlDecode(platform.requirements.recommended)
-                ),
-              }}
-            />
-          </Fragment>
-        )
+        <Fragment key={index}>
+          <div className={styles.requirement}>
+            {platform.requirements.minimum}
+          </div>
+          <div className={styles.requirement}>
+            {platform.requirements.recommended}
+          </div>
+        </Fragment>
       );
     });
+
+  const additions =
+    loadedAdditions.results &&
+    loadedAdditions.results.map((addition, index) => (
+      <Card
+        key={index}
+        poster={addition.background_image}
+        title={addition.name}
+      />
+    ));
+
+  const installments =
+    loadedInstallments.results &&
+    loadedInstallments.results.map((installment, index) => (
+      <Card
+        key={index}
+        poster={installment.background_image}
+        title={installment.name}
+      />
+    ));
 
   return (
     <Fragment>
@@ -311,7 +360,17 @@ const GameDetails = () => {
             </div>
             <div className={styles.team}>
               <h2>Team</h2>
-              <div className={styles.creators}>{team}</div>
+              <div className={styles['container-content']}>
+                <Pagination
+                  gallery
+                  currentPage={currentPageTeam}
+                  numberOfPages={Math.ceil(loadedTeam.count / 5)}
+                  onClickPrev={prevHandlerTeam}
+                  onClickNext={nextHandlerTeam}
+                >
+                  <div className={styles.creators}>{team}</div>
+                </Pagination>
+              </div>
             </div>
             <div className={styles.row}>
               <div className={styles.container}>
@@ -325,26 +384,87 @@ const GameDetails = () => {
             </div>
             <div className={styles.container}>
               <h2>Achievments</h2>
-              <div className={styles.achievments}>{achievements}</div>
+              <div className={styles['container-content']}>
+                <Pagination
+                  gallery
+                  currentPage={currentPageAchievments}
+                  numberOfPages={Math.ceil(loadedAchievments.count / 10)}
+                  onClickPrev={prevHandlerAchievments}
+                  onClickNext={nextHandlerAchievments}
+                >
+                  <div className={styles.achievments}>{achievements}</div>
+                </Pagination>
+              </div>
             </div>
-            <div>
-              <h2>Requirements</h2>
-              {requirements}
-            </div>
+            {pc && Object.keys(pc[0].requirements).length !== 0 && (
+              <div className={styles.container}>
+                <h2>PC Requirements</h2>
+                {requirements}
+              </div>
+            )}
             <div>
               <h2>Images</h2>
-              <Gallery image images={loadedImages.results} />
+              <div className={styles['container-content']}>
+                <Pagination
+                  gallery
+                  currentPage={currentPageImage}
+                  numberOfPages={Math.ceil(loadedImages.count / 5)}
+                  onClickPrev={prevHandlerImage}
+                  onClickNext={nextHandlerImage}
+                >
+                  <Gallery image images={loadedImages.results} />
+                </Pagination>
+              </div>
             </div>
-            <div>
-              <h2>Videos</h2>
-              <Gallery video videos={loadedVideos.results} />
-            </div>
-            <div>
-              <h2>DLC's and other Editions</h2>
-            </div>
-            <div>
-              <h2>Franchise</h2>
-            </div>
+            {loadedVideos.results && loadedVideos.results.length !== 0 && (
+              <div>
+                <h2>Videos</h2>
+                <div className={styles['container-content']}>
+                  <Pagination
+                    gallery
+                    currentPage={currentPageVideo}
+                    numberOfPages={Math.ceil(loadedVideos.count / 5)}
+                    onClickPrev={prevHandlerVideo}
+                    onClickNext={nextHandlerVideo}
+                  >
+                    <Gallery video videos={loadedVideos.results} />
+                  </Pagination>
+                </div>
+              </div>
+            )}
+            {loadedAdditions.results && loadedAdditions.results.length !== 0 && (
+              <div className={styles.container}>
+                <h2>DLC's and other Editions</h2>
+                <div className={styles['container-content']}>
+                  <Pagination
+                    gallery
+                    currentPage={currentPageAdditions}
+                    numberOfPages={Math.ceil(loadedAdditions.count / 5)}
+                    onClickPrev={prevHandlerAdditions}
+                    onClickNext={nextHandlerAdditions}
+                  >
+                    <div className={styles.additions}>{additions}</div>
+                  </Pagination>
+                </div>
+              </div>
+            )}
+            {loadedInstallments.results &&
+              loadedInstallments.results.length !== 0 && (
+                <div className={styles.container}>
+                  <h2>Franchise</h2>
+                  <div className={styles['container-content']}>
+                    <Pagination
+                      gallery
+                      currentPage={currentPageInstallments}
+                      numberOfPages={Math.ceil(loadedInstallments.count / 5)}
+                      onClickPrev={prevHandlerInstallments}
+                      onClickNext={nextHandlerInstallments}
+                    >
+                      <div className={styles.installments}>{installments}</div>
+                    </Pagination>
+                  </div>
+                </div>
+              )}
           </div>
         </section>
       )}

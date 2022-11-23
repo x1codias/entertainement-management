@@ -35,18 +35,22 @@ const Pagination = (props) => {
     return (
       <Fragment>
         {props.currentPage > 1 && (
-          <button onClick={props.onClickPrev}>
-            <IconContext.Provider value={{ size: '2.4rem' }}>
-              <FaChevronLeft />
-            </IconContext.Provider>
+          <button className={styles.btn} onClick={props.onClickPrev}>
+            <span>
+              <IconContext.Provider value={{ size: '2.4rem' }}>
+                <FaChevronLeft />
+              </IconContext.Provider>
+            </span>
           </button>
         )}
         {props.children}
         {props.currentPage !== props.numberOfPages && (
-          <button onClick={props.onClickNext}>
-            <IconContext.Provider value={{ size: '2.4rem' }}>
-              <FaChevronRight />
-            </IconContext.Provider>
+          <button className={styles.btn} onClick={props.onClickNext}>
+            <span>
+              <IconContext.Provider value={{ size: '2.4rem' }}>
+                <FaChevronRight />
+              </IconContext.Provider>
+            </span>
           </button>
         )}
       </Fragment>
