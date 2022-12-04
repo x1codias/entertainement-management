@@ -1,5 +1,10 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { IconContext } from 'react-icons';
+import { SiAppletv, SiRakuten, SiHbo } from 'react-icons/si';
+import { FaGooglePlay, FaYoutube } from 'react-icons/fa';
+import { RiNetflixFill } from 'react-icons/ri';
+import { CSSTransition } from 'react-transition-group';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import Table from '../components/Table';
@@ -10,6 +15,7 @@ import { usePagination } from '../hooks/pagination-hook';
 import Pagination from '../components/Pagination';
 
 import styles from './MovieDetails.module.css';
+import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
 
 const Details = () => {
   const { id } = useParams();
@@ -20,7 +26,8 @@ const Details = () => {
   const [loadedVideos, setLoadedVideos] = useState([]);
   const [loadedSimilar, setLoadedSimilar] = useState([]);
   const [loadedWatchProviders, setLoadedWatchProviders] = useState();
-  const [totalResults, setTotalResults] = useState();
+  const [loadedKeywords, setLoadedKeywords] = useState();
+  const [changing, setChanging] = useState(true);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const {
     currentPage: currentPageVideo,
@@ -57,6 +64,7 @@ const Details = () => {
         const urlImages = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/images?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlVideos = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlSimilar = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+        const urlKeywords = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/keywords?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
 
         const movieData = await sendRequest(urlMovieDetails);
         const castData = await sendRequest(urlCastCrew);
@@ -64,6 +72,10 @@ const Details = () => {
         const imageData = await sendRequest(urlImages);
         const videoData = await sendRequest(urlVideos);
         const similarData = await sendRequest(urlSimilar);
+        const keywordsData = await sendRequest(urlKeywords);
+        const data = await sendRequest(
+          'https://api.themoviedb.org/3/person/73457?api_key=5404dfaa6134c6da140f05453bfa52b3'
+        );
 
         console.log(movieData);
         console.log(castData);
@@ -71,6 +83,8 @@ const Details = () => {
         console.log(imageData);
         console.log(videoData);
         console.log(similarData);
+        console.log(keywordsData);
+        console.log(data);
 
         setLoadedMovie(movieData);
         setLoadedCast(castData.cast);
@@ -79,11 +93,32 @@ const Details = () => {
         setLoadedImages(imageData.backdrops);
         setLoadedVideos(videoData.results);
         setLoadedSimilar(similarData.results);
-        setTotalResults(similarData.total_results);
+        setLoadedKeywords(keywordsData.keywords);
       } catch (err) {}
     };
     fetchMovie();
   }, [sendRequest, id]);
+
+  const platforms =
+    loadedWatchProviders &&
+    loadedWatchProviders.flatrate &&
+    loadedWatchProviders.flatrate.map((platform, index) => {
+      return (
+        <span key={index} className={styles.platform}>
+          <IconContext.Provider value={{ size: '3rem' }}>
+            {platform.provider_name.includes('Disney') && (
+              <span className={styles.disney}>Disney +</span>
+            )}
+            {platform.provider_name.includes('Youtube') && <FaYoutube />}
+            {platform.provider_name.includes('Google') && <FaGooglePlay />}
+            {platform.provider_name.includes('Rakuten') && <SiRakuten />}
+            {platform.provider_name.includes('HBO') && <SiHbo />}
+            {platform.provider_name.includes('Netflix') && <RiNetflixFill />}
+            {platform.provider_name.includes('Apple') && <SiAppletv />}
+          </IconContext.Provider>
+        </span>
+      );
+    });
 
   let genres;
 
@@ -149,41 +184,35 @@ const Details = () => {
     }
   }
 
-  const getPaginatedDataImage = () => {
-    const startIndex = currentPageImage * 5 - 5;
-    const endIndex = startIndex + 5;
-    return loadedImages.slice(startIndex, endIndex);
-  };
+  const prodCompanies =
+    loadedMovie &&
+    loadedMovie.production_companies &&
+    loadedMovie.production_companies.map((proComp, index) => {
+      return (
+        <span key={index} className={styles.company}>
+          {proComp.name}
+        </span>
+      );
+    });
 
-  const getPaginatedDataVideo = () => {
-    const startIndex = currentPageVideo * 5 - 5;
-    const endIndex = startIndex + 5;
-    return loadedVideos.slice(startIndex, endIndex);
-  };
+  const tags =
+    loadedKeywords &&
+    loadedKeywords.map((tag, index) => (
+      <span key={index} className={styles.tag}>
+        {tag.name}
+      </span>
+    ));
 
-  const getPaginatedDataCast = () => {
-    const startIndex = currentPageCast * 5 - 5;
+  const getPaginatedData = (currentPage, data) => {
+    const startIndex = currentPage * 5 - 5;
     const endIndex = startIndex + 5;
-    return loadedImages.slice(startIndex, endIndex);
-  };
-
-  const getPaginatedDataCrew = () => {
-    const startIndex = currentPageCrew * 5 - 5;
-    const endIndex = startIndex + 5;
-    return loadedImages.slice(startIndex, endIndex);
-  };
-
-  const getPaginatedDataSimilar = () => {
-    const startIndex = currentPageSimilar * 5 - 5;
-    const endIndex = startIndex + 5;
-    return loadedSimilar.slice(startIndex, endIndex);
+    return data.slice(startIndex, endIndex);
   };
 
   const similarMovies =
+    getPaginatedData(currentPageSimilar, loadedSimilar) &&
     loadedSimilar &&
-    getPaginatedDataSimilar() &&
-    getPaginatedDataSimilar()[4].id !== loadedSimilar[19].id &&
-    getPaginatedDataSimilar().map((movie, index) => {
+    getPaginatedData(currentPageSimilar, loadedSimilar).map((movie, index) => {
       return (
         <Card
           key={index}
@@ -197,6 +226,47 @@ const Details = () => {
       );
     });
 
+  const cast =
+    getPaginatedData(currentPageCast, loadedCast) &&
+    getPaginatedData(currentPageCast, loadedCast).map((person, index) => {
+      return (
+        <Card
+          key={index}
+          creator
+          jobCharacter={person.character}
+          background={`https://image.tmdb.org/t/p/original${loadedMovie.poster_path}`}
+          photo={
+            person.profile_path !== null
+              ? `https://image.tmdb.org/t/p/original${person.profile_path}`
+              : avatar
+          }
+          name={person.original_name}
+        />
+      );
+    });
+
+  const crew =
+    getPaginatedData(currentPageCrew, loadedCrew) &&
+    getPaginatedData(currentPageCrew, loadedCrew).map((person, index) => {
+      return (
+        <Card
+          key={index}
+          creator
+          jobCharacter={person.job}
+          background={`https://image.tmdb.org/t/p/original${loadedMovie.backdrop_path}`}
+          photo={
+            person.profile_path !== null
+              ? `https://image.tmdb.org/t/p/original${person.profile_path}`
+              : avatar
+          }
+          name={person.original_name}
+        />
+      );
+    });
+
+  const runtimeHours = Math.floor(loadedMovie.runtime / 60);
+  const runtimeMinutes = loadedMovie.runtime % 60;
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -204,11 +274,28 @@ const Details = () => {
         <div className={styles.background}>
           <img
             src={`https://image.tmdb.org/t/p/original${loadedMovie.backdrop_path}`}
-            alt="Game background"
+            alt="Movie background"
           />
         </div>
         <div className={styles.content}>
-          <h1 className={styles.details__title}>{loadedMovie.title}</h1>
+          <div className={styles.header}>
+            <div className={styles.platforms}>{platforms}</div>
+            <h1 className={styles.details__title}>{loadedMovie.title}</h1>
+            <h2 className={styles.subtitle}>{loadedMovie.tagline}</h2>
+            <div className={styles.title__content}>
+              <span className={styles.released}>
+                {loadedMovie.release_date}
+              </span>
+              <p>
+                <span className={styles.runtime}>
+                  {runtimeHours !== 0 && <strong>{runtimeHours}h</strong>}
+                  {runtimeMinutes !== 0 && <strong>{runtimeMinutes}m</strong>}
+                </span>
+                &nbsp; of runtime
+              </p>
+            </div>
+          </div>
+          <div className={styles.tags}>{tags}</div>
           <h2>Overview</h2>
           <p className={styles.details__description}>{loadedMovie.overview}</p>
           <div className={styles.container}>
@@ -231,50 +318,99 @@ const Details = () => {
             <div className={styles['container--small']}>
               <h2>Available on</h2>
               <div className={styles.details__plataforms}>
+                {streaming === undefined && buy === undefined && (
+                  <p>Not available in any streaming platform yet.</p>
+                )}{' '}
                 {streaming} {buy}
               </div>
             </div>
             <div className={styles['container--small']}>
               <h2>Release Date</h2>
-              <span className={styles.detailes__release}>
+              <span className={styles.released}>
                 {loadedMovie.release_date}
               </span>
             </div>
           </div>
-          <h2>Cast</h2>
-          <Table data={loadedCast} />
-          <h2>Crew</h2>
-          <Table data={loadedCrew} />
-          <h2>Videos</h2>
-          <Pagination
-            gallery
-            currentPage={currentPageVideo}
-            numberOfPages={Math.ceil(loadedVideos.length / 5)}
-            onClickPrev={prevHandlerVideo}
-            onClickNext={nextHandlerVideo}
-          >
-            <Gallery video videos={getPaginatedDataVideo()} />
-          </Pagination>
-          <h2>Photos</h2>
-          <Pagination
-            gallery
-            currentPage={currentPageImage}
-            numberOfPages={Math.ceil(loadedImages.length / 5)}
-            onClickPrev={prevHandlerImage}
-            onClickNext={nextHandlerImage}
-          >
-            <Gallery image images={getPaginatedDataImage()} />
-          </Pagination>
-          <h2>More like this</h2>
-          <Pagination
-            gallery
-            currentPage={currentPageSimilar}
-            numberOfPages={Math.ceil(loadedSimilar / 5)}
-            onClickNext={nextHandlerSimilar}
-            onClickPrev={prevHandlerSimilar}
-          >
-            <div className={styles.details__similar}>{similarMovies}</div>
-          </Pagination>
+          <div className={styles['container--small']}>
+            <h2>Production Companies</h2>
+            <span className={styles.companies}>{prodCompanies}</span>
+          </div>
+          <div className={styles['container--small']}>
+            <h2>Cast</h2>
+            <div className={styles['container-content']}>
+              <Pagination
+                gallery
+                currentPage={currentPageCast}
+                numberOfPages={Math.ceil(loadedCast.length / 5)}
+                onClickPrev={prevHandlerCast}
+                onClickNext={nextHandlerCast}
+              >
+                <div className={styles.team}>{cast}</div>
+              </Pagination>
+            </div>
+          </div>
+          <div className={styles['container--small']}>
+            <h2>Crew</h2>
+            <div className={styles['container-content']}>
+              <Pagination
+                gallery
+                currentPage={currentPageCrew}
+                numberOfPages={Math.ceil(loadedCrew.length / 5)}
+                onClickPrev={prevHandlerCrew}
+                onClickNext={nextHandlerCrew}
+              >
+                <div className={styles.team}>{crew}</div>
+              </Pagination>
+            </div>
+          </div>
+          <div className={styles['container--small']}>
+            <h2>Videos</h2>
+            <div className={styles['container-content']}>
+              <Pagination
+                gallery
+                currentPage={currentPageVideo}
+                numberOfPages={Math.ceil(loadedVideos.length / 5)}
+                onClickPrev={prevHandlerVideo}
+                onClickNext={nextHandlerVideo}
+              >
+                <Gallery
+                  video
+                  videos={getPaginatedData(currentPageVideo, loadedVideos)}
+                />
+              </Pagination>
+            </div>
+          </div>
+          <div className={styles['container--small']}>
+            <h2>Photos</h2>
+            <div className={styles['container-content']}>
+              <Pagination
+                gallery
+                currentPage={currentPageImage}
+                numberOfPages={Math.ceil(loadedImages.length / 5)}
+                onClickPrev={prevHandlerImage}
+                onClickNext={nextHandlerImage}
+              >
+                <Gallery
+                  image
+                  images={getPaginatedData(currentPageImage, loadedImages)}
+                />
+              </Pagination>
+            </div>
+          </div>
+          <div className={styles['container--small']}>
+            <h2>More like this</h2>
+            <div className={styles['container-content']}>
+              <Pagination
+                gallery
+                currentPage={currentPageSimilar}
+                numberOfPages={Math.ceil(loadedSimilar.length / 5)}
+                onClickNext={nextHandlerSimilar}
+                onClickPrev={prevHandlerSimilar}
+              >
+                <div className={styles.similar}>{similarMovies}</div>
+              </Pagination>
+            </div>
+          </div>
         </div>
       </section>
     </Fragment>

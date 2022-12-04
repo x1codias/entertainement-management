@@ -39,7 +39,7 @@ const Sidebar = (props) => {
               <span>Shows</span>
             </NavLink>
           </li>
-          <li className={styles['nav__item']}>
+          {/* <li className={styles['nav__item']}>
             <NavLink className={styles['nav__link']} to="/animes">
               <svg>
                 <IconContext.Provider
@@ -50,7 +50,7 @@ const Sidebar = (props) => {
               </svg>
               <span>Animes</span>
             </NavLink>
-          </li>
+          </li> */}
           <li className={styles['nav__item']}>
             <NavLink className={styles['nav__link']} to="/books">
               <svg>

@@ -190,11 +190,102 @@
 /********************* Episodes ***********************/
 
 .episode {
+  position: relative;
+  width: 95%;
+  border-radius: 2rem;
+  overflow: hidden;
+  background-color: #888;
+  display: flex;
+  box-shadow: 0 0.25rem 0.25rem rgba(255, 255, 255, 0.1),
+    0 0 1rem rgba(170, 170, 170, 1);
+  transition: scale 400ms;
+}
+
+.episode:hover {
+  scale: 0.98;
 }
 
 .episode__img img {
-  width: 5rem;
-  height: 5rem;
+  width: 30rem;
+  height: 100%;
+  object-fit: cover;
+}
+
+.episode__content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.title__container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: start;
+}
+
+.details__rating {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 1rem;
+  color: red;
+  border: 2px solid red;
+  padding: 0.5rem;
+  width: fit-content;
+}
+
+.released {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.runtime {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.very-bad {
+  color: #444;
+  border-color: #cf0a0a;
+  background-color: #cf0a0a;
+}
+
+.bad {
+  color: #444;
+  border-color: #ff5b00;
+  background-color: #ff5b00;
+}
+
+.mediocre {
+  color: #444;
+  border-color: #ffde00;
+  background-color: #ffde00;
+}
+
+.good {
+  color: #444;
+  border-color: #82954b;
+  background-color: #82954b;
+}
+
+.very-good {
+  color: #444;
+  border-color: #7dce13;
+  background-color: #7dce13;
 }
 
 /********************* Card ***********************/

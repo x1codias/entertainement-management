@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 export const usePagination = (type) => {
   let [currentPage, setCurrentPage] = useState(1);
+  let [currentPageURL, setCurrentPageURL] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   let [pageNumberLimit] = useState(10);
   let [maxPageNumberLimit, setMaxPageNumberLimit] = useState(10);

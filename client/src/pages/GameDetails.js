@@ -303,7 +303,7 @@ const GameDetails = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedGame && (
+      {loadedGame && (
         <section className={styles.details}>
           <div className={styles.background}>
             <img

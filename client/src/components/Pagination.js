@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { IconContext } from 'react-icons';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import styles from './Pagination.module.css';
 

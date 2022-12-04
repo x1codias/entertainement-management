@@ -1,0 +1,438 @@
+.details {
+  padding-bottom: 10rem;
+  margin: auto;
+  box-sizing: border-box;
+  width: 100%;
+  padding-right: 20rem;
+}
+
+.background {
+  width: 270rem;
+  height: 60rem;
+  margin-left: -10rem;
+  margin-top: -10rem;
+  position: relative;
+  z-index: -1;
+}
+
+.background::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(51, 51, 51, 0),
+    rgba(68, 68, 68, 1)
+  );
+  width: 100%;
+  height: 100%;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  margin-top: -30rem;
+  z-index: 2;
+  font-size: 1.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.details__title {
+  font-size: 7rem;
+  font-weight: 900;
+}
+
+.title__content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
+}
+
+.released {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.runtime {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+}
+
+.tags {
+  display: inline-block;
+  width: 100%;
+  margin-left: -1rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: background-color 400ms, transform 400ms;
+  margin: 1rem 0 0 1rem;
+}
+
+.tag:hover {
+  transform: scale(1.1);
+  color: #444;
+  background-color: #d3d3d3;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container--small {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.genres {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.7rem;
+}
+
+.genre {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 2rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1rem 2.4rem;
+  transition: background-color 400ms, transform 400ms;
+}
+
+.genre:hover {
+  transform: scale(1.1);
+}
+
+.rating {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 1rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1.5rem;
+  transition: background-color 400ms, transform 400ms;
+  width: fit-content;
+}
+
+.rating:hover {
+  transform: scale(1.1);
+}
+
+.studios {
+  display: flex;
+  gap: 1rem;
+}
+
+.studio {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+/******************** Genres **************************/
+
+.action {
+  color: #dd5353;
+  border-color: #dd5353;
+}
+
+.action:hover {
+  color: #444;
+  background-color: #dd5353;
+}
+
+.adventure {
+  color: #fd841f;
+  border-color: #fd841f;
+}
+
+.adventure:hover {
+  color: #444;
+  background-color: #fd841f;
+}
+
+.comedy {
+  color: #fce700;
+  border-color: #fce700;
+}
+
+.comedy:hover {
+  color: #444;
+  background-color: #fce700;
+}
+
+.drama {
+  color: beige;
+  border-color: beige;
+}
+
+.drama:hover {
+  color: #444;
+  background-color: beige;
+}
+
+.fantasy {
+  color: #3b3486;
+  border-color: #3b3486;
+}
+
+.fantasy:hover {
+  color: #444;
+  background-color: #3b3486;
+}
+
+.horror {
+  color: #432c7a;
+  border-color: #432c7a;
+}
+
+.horror:hover {
+  color: #444;
+  background-color: #432c7a;
+}
+
+.mahou-shoujo {
+  color: #d989b5;
+  border-color: #d989b5;
+}
+
+.mahou-shoujo:hover {
+  color: #444;
+  background-color: #d989b5;
+}
+
+.mecha {
+  color: #b2b2b2;
+  border-color: #b2b2b2;
+}
+
+.mecha:hover {
+  color: #444;
+  background-color: #b2b2b2;
+}
+
+.music {
+  color: #eb6440;
+  border-color: #eb6440;
+}
+
+.music:hover {
+  color: #444;
+  background-color: #eb6440;
+}
+
+.mystery {
+  color: #251b37;
+  border-color: #251b37;
+}
+
+.mystery:hover {
+  color: #444;
+  background-color: #251b37;
+}
+
+.psychological {
+  color: #bce29e;
+  border-color: #bce29e;
+}
+
+.psychological:hover {
+  color: #444;
+  background-color: #bce29e;
+}
+
+.romance {
+  color: #ffb9b9;
+  border-color: #ffb9b9;
+}
+
+.romance:hover {
+  color: #444;
+  background-color: #ffb9b9;
+}
+
+.sci-fi {
+  color: #3f0071;
+  border-color: #3f0071;
+}
+
+.sci-fi:hover {
+  color: #444;
+  background-color: #3f0071;
+}
+
+.slice-of-life {
+  color: #9f8772;
+  border-color: #9f8772;
+}
+
+.slice-of-life:hover {
+  color: #444;
+  background-color: #9f8772;
+}
+
+.sports {
+  color: #967e76;
+  border-color: #967e76;
+}
+
+.sports:hover {
+  color: #444;
+  background-color: #967e76;
+}
+
+.supernatural {
+  color: #c147e9;
+  border-color: #c147e9;
+}
+
+.supernatural:hover {
+  color: #444;
+  background-color: #c147e9;
+}
+
+.thriller {
+  color: #fffae7;
+  border-color: #fffae7;
+}
+
+.thriller:hover {
+  color: #444;
+  background-color: #fffae7;
+}
+
+/******************** Ratings **************************/
+
+.very-bad {
+  color: #cf0a0a;
+  border-color: #cf0a0a;
+}
+
+.very-bad:hover {
+  color: #444;
+  background-color: #cf0a0a;
+}
+
+.bad {
+  color: #ff5b00;
+  border-color: #ff5b00;
+}
+
+.bad:hover {
+  color: #444;
+  background-color: #ff5b00;
+}
+
+.mediocre {
+  color: #ffde00;
+  border-color: #ffde00;
+}
+
+.mediocre:hover {
+  color: #444;
+  background-color: #ffde00;
+}
+
+.good {
+  color: #82954b;
+  border-color: #82954b;
+}
+
+.good:hover {
+  color: #444;
+  background-color: #82954b;
+}
+
+.very-good {
+  color: #7dce13;
+  border-color: #7dce13;
+}
+
+.very-good:hover {
+  color: #444;
+  background-color: #7dce13;
+}
+
+.very-bad--filled {
+  color: #444;
+  border-color: #cf0a0a;
+  background-color: #cf0a0a;
+}
+
+.bad--filled {
+  color: #444;
+  border-color: #ff5b00;
+  background-color: #ff5b00;
+}
+
+.mediocre--filled {
+  color: #444;
+  border-color: #ffde00;
+  background-color: #ffde00;
+}
+
+.good--filled {
+  color: #444;
+  border-color: #82954b;
+  background-color: #82954b;
+}
+
+.very-good--filled {
+  color: #444;
+  border-color: #7dce13;
+  background-color: #7dce13;
+}

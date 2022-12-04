@@ -13,7 +13,8 @@ const Animes = () => {
   const location = useLocation();
   const [loadedAnimes, setLoadedAnimes] = useState([]);
   const { inputText, changeHandler } = useSearch();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, error, sendRequestGraphQL, sendRequest, clearError } =
+    useHttpClient();
   const {
     currentPage,
     totalPages,
@@ -28,50 +29,141 @@ const Animes = () => {
     nextHandler,
   } = usePagination('anime');
 
+  const ANIMES_QUERY = `
+     query ($currentPage: Int) { 
+      GenreCollection,
+      Page(page: $currentPage, perPage: 20) {
+        pageInfo {
+          total,
+          perPage,
+          currentPage
+        },
+        media(type: ANIME, genre_not_in: ["hentai"], sort: TRENDING_DESC) {
+          id,
+          idMal,
+          title {
+            romaji,
+            english,
+            native
+          },
+          description(asHtml: true),
+          coverImage{
+            extraLarge,
+            color
+          },
+        }
+      }
+    }
+  `;
+
+  const SEARCH_ANIMES_QUERY = `
+     query ($currentPage: Int, $searchQry: String) { 
+      Page(page: $currentPage, perPage: 20) {
+        pageInfo {
+          total,
+          perPage,
+          currentPage
+        },
+        media(type: ANIME, sort: TRENDING_DESC, genre_not_in: ["hentai"], search: $searchQry) {
+          id,
+          idMal,
+          title {
+            romaji,
+            english,
+            native
+          },
+          description,
+          coverImage{
+            extraLarge,
+            color
+          },
+        }
+      }
+    }
+  `;
+
   useEffect(() => {
     const fetchAnimes = async () => {
+      const url = 'https://graphql.anilist.co';
+
       if (inputText === '') {
         try {
-          const responseData = await sendRequest(
-            `${process.env.REACT_APP_KITSU_BASE_URL}anime?page[limit]=20&page[offset]=${offset}&sort=popularityRank`
+          const options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              query: ANIMES_QUERY,
+              variables: { currentPage: currentPage },
+            }),
+          };
+
+          const anilistData = await sendRequestGraphQL(url, options);
+
+          console.log(anilistData);
+
+          setDataLength(anilistData.data.Page.pageInfo.total);
+          setTotalPages(
+            Math.round((anilistData.data.Page.pageInfo.total + 20 - 1) / 20)
           );
-
-          console.log(responseData);
-
-          setDataLength(responseData.meta.count);
-          setTotalPages(Math.round((responseData.meta.count + 20 - 1) / 20));
-          setLoadedAnimes(responseData.data);
+          setLoadedAnimes(anilistData.data.Page.media);
         } catch (err) {}
       } else {
         try {
-          const responseData = await sendRequest(
-            `${process.env.REACT_APP_KITSU_BASE_URL}anime?page[limit]=20&page[offset]=${offset}&sort=popularityRank&filter[text]=${inputText}`
+          const options = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              query: SEARCH_ANIMES_QUERY,
+              variables: { currentPage: currentPage, searchQry: inputText },
+            }),
+          };
+
+          const anilistData = await sendRequestGraphQL(url, options);
+
+          console.log(anilistData);
+
+          setDataLength(anilistData.data.Page.pageInfo.total);
+          setTotalPages(
+            Math.round((anilistData.data.Page.pageInfo.total + 20 - 1) / 20)
           );
-
-          console.log(responseData);
-
-          setDataLength(responseData.meta.count);
-          setTotalPages(Math.round((responseData.meta.count + 20 - 1) / 20));
-          setLoadedAnimes(responseData.data);
+          setLoadedAnimes(anilistData.data.Page.media);
         } catch (err) {}
       }
     };
     fetchAnimes();
-  }, [sendRequest, inputText, setTotalPages, offset, setDataLength]);
+  }, [
+    sendRequestGraphQL,
+    inputText,
+    setTotalPages,
+    offset,
+    setDataLength,
+    ANIMES_QUERY,
+    SEARCH_ANIMES_QUERY,
+    currentPage,
+  ]);
 
-  const animes = loadedAnimes.map((anime) => {
-    return (
-      <Card
-        key={anime.id}
-        page={location.pathname}
-        id={anime.id}
-        poster={anime.attributes.posterImage.original}
-        title={anime.attributes.canonicalTitle}
-        description={anime.attributes.description}
-        isLoading={isLoading}
-      />
-    );
-  });
+  const animes =
+    loadedAnimes &&
+    loadedAnimes.map((anime, index) => {
+      return (
+        <Card
+          key={index}
+          page={location.pathname}
+          id={anime.id}
+          poster={anime.coverImage.extraLarge}
+          title={anime.title.romaji}
+          anime
+          description={anime.description}
+          isLoading={isLoading}
+        />
+      );
+    });
 
   return (
     <Fragment>

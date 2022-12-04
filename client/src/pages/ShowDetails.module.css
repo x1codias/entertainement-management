@@ -42,72 +42,164 @@ genres:
 
 /******************** Page Styling **************************/
 
-.details__container {
-  width: 80%;
-  height: 100vh;
+.details {
+  padding-bottom: 10rem;
+  margin: auto;
+  box-sizing: border-box;
+  width: 100%;
+  padding-right: 20rem;
+}
+
+.background {
+  width: 270rem;
+  height: 60rem;
+  margin-left: -10rem;
+  margin-top: -10rem;
+  position: relative;
+  z-index: -1;
+}
+
+.background::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(51, 51, 51, 0),
+    rgba(68, 68, 68, 1)
+  );
+  width: 100%;
+  height: 100%;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  margin-top: -30rem;
+  z-index: 2;
+  font-size: 1.7rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-}
-
-.details__img {
-  display: block;
-  width: 100vw;
-  height: 40%;
-  margin-left: -15rem;
-  margin-top: -13rem;
-  z-index: -1;
-  text-align: center;
-  overflow-y: hidden;
-  position: relative;
-  mask-image: linear-gradient(to top, rgba(68, 68, 68, 0), rgba(68, 68, 68, 1));
-}
-
-.details__img img {
+  gap: 4rem;
   width: 100%;
-  height: auto;
-  object-fit: cover;
-  mask-image: linear-gradient(to top, rgba(68, 68, 68, 0), rgba(68, 68, 68, 1));
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .details__title {
+  font-size: 7rem;
   font-weight: 900;
-  font-size: 4rem;
-  margin-top: -15rem;
 }
 
-.details__container h2 {
-  font-size: 3rem;
-  text-align: center;
+.title__content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
+}
+
+.released {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.runtime {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+}
+
+.platforms {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.disney {
+  font-family: 'New Walt Disney Font';
+  font-weight: 600;
+  font-size: 4rem;
+  text-align: justify;
+}
+
+.tags {
+  display: inline-block;
+  width: 100%;
+  margin-left: -1rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: background-color 400ms, transform 400ms;
+  margin: 1rem 0 0 1rem;
+}
+
+.tag:hover {
+  transform: scale(1.1);
+  color: #444;
+  background-color: #d3d3d3;
 }
 
 .details__description {
-  font-size: 2rem;
-  text-align: center;
+  line-height: 2.4rem;
+  text-align: start;
 }
 
 .container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container-content {
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 .container--small {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: flex-start;
   gap: 2rem;
 }
 
-.container--genres {
+.genres {
   display: flex;
   justify-content: space-around;
   align-items: center;
   gap: 1.7rem;
 }
 
-.details__genre {
+.genre {
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -118,11 +210,11 @@ genres:
   transition: background-color 400ms, transform 400ms;
 }
 
-.details__genre:hover {
+.genre:hover {
   transform: scale(1.1);
 }
 
-.details__rating {
+.rating {
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -131,9 +223,10 @@ genres:
   border: 2px solid red;
   padding: 1.5rem;
   transition: background-color 400ms, transform 400ms;
+  width: fit-content;
 }
 
-.details__rating:hover {
+.rating:hover {
   transform: scale(1.1);
 }
 
@@ -144,7 +237,7 @@ genres:
 }
 
 .details__plataform img {
-  border-radius: 0.5rem;
+  border-radius: 2rem;
   transition: transform 400ms;
 }
 
@@ -163,9 +256,89 @@ genres:
   display: flex;
 }
 
-.details__episodes {
+.episodes {
+  padding: 0 2rem 0 2rem;
   display: flex;
   flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  height: 100%;
+}
+
+.team {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+}
+
+.similar {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+}
+
+.episode__content {
+  background-color: #142933;
+  background-size: cover;
+  background-blend-mode: multiply;
+  border-radius: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.title__season__container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 2rem 0 2rem;
+}
+
+.details__rating--filled {
+  font-size: 3rem;
+  font-weight: 900;
+  text-align: center;
+  border-radius: 1rem;
+  color: red;
+  border: 2px solid red;
+  padding: 1.2rem 1rem;
+  width: fit-content;
+}
+
+.companies {
+  display: flex;
+  gap: 1rem;
+}
+
+.company {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.networks {
+  display: flex;
+  gap: 1rem;
+}
+
+.network {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
 }
 
 /******************** Genres **************************/
@@ -439,5 +612,35 @@ genres:
 
 .very-good:hover {
   color: #444;
+  background-color: #7dce13;
+}
+
+.very-bad--filled {
+  color: #444;
+  border-color: #cf0a0a;
+  background-color: #cf0a0a;
+}
+
+.bad--filled {
+  color: #444;
+  border-color: #ff5b00;
+  background-color: #ff5b00;
+}
+
+.mediocre--filled {
+  color: #444;
+  border-color: #ffde00;
+  background-color: #ffde00;
+}
+
+.good--filled {
+  color: #444;
+  border-color: #82954b;
+  background-color: #82954b;
+}
+
+.very-good--filled {
+  color: #444;
+  border-color: #7dce13;
   background-color: #7dce13;
 }

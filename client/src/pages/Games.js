@@ -32,7 +32,7 @@ const Games = () => {
       if (inputText === '') {
         try {
           const responseData = await sendRequest(
-            `${process.env.REACT_APP_RAWG_BASE_URL}?page=${currentPage}&ordering=-metacritic,released&key=${process.env.REACT_APP_RAWG_API_KEY}`
+            `${process.env.REACT_APP_RAWG_BASE_URL}?page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`
           );
 
           console.log(responseData);

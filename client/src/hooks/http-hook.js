@@ -40,6 +40,27 @@ export const useHttpClient = () => {
     []
   );
 
+  const sendRequestGraphQL = useCallback(async (url, options) => {
+    // Make the HTTP Api request
+    setIsLoading(true);
+    try {
+      const response = await fetch(url, options);
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message);
+      }
+
+      setIsLoading(false);
+      return responseData;
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+      throw err;
+    }
+  }, []);
+
   const clearError = () => {
     setError(null);
   };
@@ -50,5 +71,5 @@ export const useHttpClient = () => {
     };
   }, []);
 
-  return { isLoading, error, sendRequest, clearError };
+  return { isLoading, error, sendRequest, sendRequestGraphQL, clearError };
 };

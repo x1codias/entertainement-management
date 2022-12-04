@@ -89,33 +89,98 @@ genres:
   width: 100%;
 }
 
-.details__title {
-  font-weight: 900;
-  font-size: 4rem;
-  margin-top: -15rem;
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.details__container h2 {
+.details__title {
+  font-size: 7rem;
+  font-weight: 900;
+}
+
+.title__content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
+}
+
+.released {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  width: fit-content;
+}
+
+.runtime {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+}
+
+.platforms {
+  display: flex;
+  gap: 1rem;
+}
+
+.disney {
+  font-family: 'New Walt Disney Font';
+  font-weight: 400;
   font-size: 3rem;
   text-align: center;
 }
 
+.tags {
+  display: inline-block;
+  width: 100%;
+  margin-left: -1rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  transition: background-color 400ms, transform 400ms;
+  margin: 1rem 0 0 1rem;
+}
+
+.tag:hover {
+  transform: scale(1.1);
+  color: #444;
+  background-color: #d3d3d3;
+}
+
 .details__description {
-  font-size: 2rem;
-  text-align: center;
+  line-height: 2.4rem;
+  text-align: start;
 }
 
 .container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 
 .container--small {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: flex-start;
   gap: 2rem;
 }
 
@@ -150,6 +215,7 @@ genres:
   border: 2px solid red;
   padding: 1.5rem;
   transition: background-color 400ms, transform 400ms;
+  width: fit-content;
 }
 
 .details__rating:hover {
@@ -163,7 +229,7 @@ genres:
 }
 
 .details__plataform img {
-  border-radius: 2.5rem;
+  border-radius: 2rem;
   transition: transform 400ms;
 }
 
@@ -178,8 +244,55 @@ genres:
   object-fit: cover;
 }
 
-.details__similar {
+.container-content {
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.team {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+}
+
+.similar {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+}
+
+.companies {
+  display: inline-block;
+  margin-left: -1rem;
+}
+
+.company {
+  display: inline-block;
+  font-weight: 700;
+  border-radius: 2rem;
+  color: #444;
+  background-color: #d3d3d3;
+  border: 2px solid #d3d3d3;
+  padding: 0.5rem 1.2rem;
+  margin: 1rem 0 0 1rem;
+}
+
+.slide-enter {
+  transform: translateX(100%);
+}
+.slide-enter-active {
+  transform: translateX(0%);
+  transition: transform 500ms ease-in-out;
+}
+.slide-exit {
+  transform: translateX(0%, -100%);
+}
+.slide-exit-active {
+  transform: translateX(-100%, -100%);
+  transition: transform 500ms ease-in-out;
 }
 
 /******************** Genres **************************/

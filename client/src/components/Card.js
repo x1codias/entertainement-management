@@ -43,7 +43,14 @@ const Card = (props) => {
               </div>
               <div className={styles.content}>
                 <h2 className={styles.name}>{props.name}</h2>
-                <div className={styles.positions}>{positions}</div>
+                <div className={styles.positions}>
+                  {props.positions && positions}{' '}
+                  {props.jobCharacter && (
+                    <span className={styles.position}>
+                      {props.jobCharacter}
+                    </span>
+                  )}
+                </div>
                 <div className={styles['known-for--container']}>
                   <h2>Known For</h2>
                   <ul className={styles['known-for--list']}>{knownGames}</ul>
@@ -92,10 +99,37 @@ const Card = (props) => {
               <div className={styles.episode__img}>
                 <img src={props.image} alt="Backdrop of episode" />
               </div>
-              <h2 className={styles.episode__title}>{props.title}</h2>
-              <p className={styles.episode__description}>{props.description}</p>
-              <span className={styles.episode__score}>{props.score}</span>
-              <span className={styles.episode__length}>{props.length}</span>
+              <div className={styles.episode__content}>
+                <div className={styles.title__container}>
+                  <h2 className={styles.episode__title}>{props.title}</h2>
+                  <span
+                    className={`${styles.details__rating} ${
+                      styles[`${props.scoreStyle}`]
+                    }`}
+                  >
+                    {props.score}
+                  </span>
+                </div>
+                <p className={styles.episode__description}>
+                  {props.description}
+                </p>
+
+                <p>
+                  Release Date:{' '}
+                  <span className={styles.released}>{props.airdate}</span>
+                </p>
+                <p>
+                  <span className={styles.runtime}>
+                    {props.runtimeHours !== 0 && (
+                      <strong>{props.runtimeHours}h</strong>
+                    )}
+                    {props.runtimeMinutes !== 0 && (
+                      <strong>{props.runtimeMinutes}m</strong>
+                    )}
+                  </span>
+                  &nbsp; of runtime
+                </p>
+              </div>
             </Fragment>
           )}
         </div>
@@ -124,6 +158,11 @@ const Card = (props) => {
               {!props.game && (
                 <div className={styles.card__description}>
                   <p>{props.description}</p>
+                  {props.anime && (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: props.description }}
+                    />
+                  )}
                 </div>
               )}
               <div className={styles['card__button--container']}>
