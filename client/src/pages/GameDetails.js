@@ -34,6 +34,7 @@ import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 
 import styles from './GameDetails.module.css';
+import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -78,13 +79,13 @@ const GameDetails = () => {
 
   useEffect(() => {
     const fetchGame = async () => {
-      const urlGame = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}?key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlAchievments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/achievements?page=${currentPageAchievments}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlVideos = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/movies?page=${currentPageVideo}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlImages = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/screenshots?page=${currentPageImage}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlAdditions = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/additions?page=${currentPageAdditions}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlInstallments = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/game-series?page=${currentPageInstallments}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
-      const urlTeam = `${process.env.REACT_APP_RAWG_BASE_URL}/${id}/development-team?page=${currentPageTeam}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlGame = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}?key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlAchievments = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/achievements?page=${currentPageAchievments}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlVideos = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/movies?page=${currentPageVideo}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlImages = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/screenshots?page=${currentPageImage}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlAdditions = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/additions?page=${currentPageAdditions}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlInstallments = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/game-series?page=${currentPageInstallments}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlTeam = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/development-team?page=${currentPageTeam}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
 
       try {
         const gameData = await sendRequest(urlGame);
@@ -251,7 +252,7 @@ const GameDetails = () => {
           positions={person.positions}
           knownGames={person.games}
           background={person.image_background}
-          photo={person.image}
+          photo={person.image ? person.image : avatar}
           name={person.name}
         />
       );
@@ -432,22 +433,23 @@ const GameDetails = () => {
                 </div>
               </div>
             )}
-            {loadedAdditions.results && loadedAdditions.results.length !== 0 && (
-              <div className={styles.container}>
-                <h2>DLC's and other Editions</h2>
-                <div className={styles['container-content']}>
-                  <Pagination
-                    gallery
-                    currentPage={currentPageAdditions}
-                    numberOfPages={Math.ceil(loadedAdditions.count / 5)}
-                    onClickPrev={prevHandlerAdditions}
-                    onClickNext={nextHandlerAdditions}
-                  >
-                    <div className={styles.additions}>{additions}</div>
-                  </Pagination>
+            {loadedAdditions.results &&
+              loadedAdditions.results.length !== 0 && (
+                <div className={styles.container}>
+                  <h2>DLC's and other Editions</h2>
+                  <div className={styles['container-content']}>
+                    <Pagination
+                      gallery
+                      currentPage={currentPageAdditions}
+                      numberOfPages={Math.ceil(loadedAdditions.count / 5)}
+                      onClickPrev={prevHandlerAdditions}
+                      onClickNext={nextHandlerAdditions}
+                    >
+                      <div className={styles.additions}>{additions}</div>
+                    </Pagination>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             {loadedInstallments.results &&
               loadedInstallments.results.length !== 0 && (
                 <div className={styles.container}>

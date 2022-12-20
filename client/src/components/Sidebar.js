@@ -16,7 +16,7 @@ const Sidebar = (props) => {
       <nav className={styles['nav__container']}>
         <ul className={styles.nav}>
           <li className={styles['nav__item']}>
-            <NavLink className={styles['nav__link']} to={`/movies?page=1`}>
+            <NavLink className={styles['nav__link']} to={`/movies`}>
               <svg>
                 <IconContext.Provider
                   value={{ size: '26px', className: 'nav__icon' }}

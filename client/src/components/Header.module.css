@@ -1,23 +1,33 @@
+@font-face {
+  font-family: 'neon-tubes-2-regular';
+  src: url('https://assets.codepen.io/2585/NeonTubes2.otf') format('opentype');
+}
+
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 90%;
   align-items: center;
   height: 7.6rem;
   padding: 0;
   position: relative;
   z-index: 1;
+  padding-left: 14rem;
 }
 
 .header-title {
+  font: 400 3.5rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
   height: 2.2rem;
-  font-weight: 700;
-  font-size: 3rem;
   text-decoration: none;
-  color: #d3d3d3;
+  transition: text-shadow 0.3s;
+}
+
+.header-title:hover {
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 5px 3px #000;
 }
 
 .header-auth {
-  display: flex;
-  align-items: center;
 }

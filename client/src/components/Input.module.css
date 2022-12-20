@@ -1,0 +1,42 @@
+.auth--form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.auth--form__group:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+.auth--form__input {
+  width: 100%;
+  padding: 1rem;
+  background-color: transparent;
+  border: 0.5rem solid #d7e8f0;
+  border-radius: 1rem;
+  font: 700 2.2rem 'Vibur';
+  color: rgb(255, 181, 181);
+  transition: all 0.3s;
+}
+
+.auth--form__input:focus {
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #00aaff, inset 0 0 0.5rem #00aaff, 0 0 1.5rem #00aaff,
+    inset 0 0 1.5rem #00aaff, 0 0 0.5em #00aaff, inset 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, inset 0 0 0.1em #00aaff, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 5px 3px #000;
+  outline: none;
+}
+
+.auth--form__label {
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 10px 3px #000;
+}
+
+.auth--form__label {
+  font: 700 3.6rem 'Vibur';
+  color: rgb(255, 181, 181);
+  transition: all 0.3s;
+}

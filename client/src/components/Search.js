@@ -3,7 +3,7 @@ import styles from './Search.module.css';
 
 const Search = (props) => {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.gridStyle}`}>
       <input
         type="search"
         id="search"

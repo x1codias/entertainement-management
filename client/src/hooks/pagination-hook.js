@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 export const usePagination = (type) => {
   let [currentPage, setCurrentPage] = useState(1);
-  let [currentPageURL, setCurrentPageURL] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   let [pageNumberLimit] = useState(10);
   let [maxPageNumberLimit, setMaxPageNumberLimit] = useState(10);
@@ -17,9 +16,17 @@ export const usePagination = (type) => {
 
   let nextHandler = () => {};
 
+  const firstPageHandler = () => {
+    setCurrentPage(1);
+  };
+
+  const lastPageHandler = () => {
+    setCurrentPage(Math.ceil(dataLength / 20));
+  };
+
   if (type === 'movie' || type === 'show' || type === 'game') {
     pageHandler = (e) => {
-      setCurrentPage(Number(e.target.id));
+      setCurrentPage(Number(e.target.innerText));
     };
 
     prevHandler = () => {
@@ -51,6 +58,8 @@ export const usePagination = (type) => {
       pageHandler,
       prevHandler,
       nextHandler,
+      firstPageHandler,
+      lastPageHandler,
     };
   }
 
@@ -92,6 +101,8 @@ export const usePagination = (type) => {
       pageHandler,
       prevHandler,
       nextHandler,
+      firstPageHandler,
+      lastPageHandler,
     };
   }
 

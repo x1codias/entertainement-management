@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Fragment } from 'react';
 
 import Welcome from './pages/Welcome';
 import Auth from './pages/Auth';
@@ -15,14 +14,26 @@ import ShowDetails from './pages/ShowDetails';
 //import AnimeDetails from './pages/AnimeDetails';
 import BookDetails from './pages/BookDetails';
 import GameDetails from './pages/GameDetails';
+import { useAuth } from './hooks/auth-hook';
+import { AuthContext } from './context/auth-context';
 
-function App() {
+const App = () => {
+  const { token, login, logout, userId } = useAuth();
+
   return (
-    <Fragment>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: !!token,
+        token: token,
+        userId: userId,
+        login: login,
+        logout: logout,
+      }}
+    >
       <Sidebar>
         <Header />
         <Routes>
-          <Route path="/" element={<Navigate replace to="/welcome" />}  />
+          <Route path="/" element={<Navigate replace to="/welcome" />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/movies" element={<Movies />} />
@@ -37,8 +48,8 @@ function App() {
           <Route path="/games/:id" element={<GameDetails />} />
         </Routes>
       </Sidebar>
-    </Fragment>
+    </AuthContext.Provider>
   );
-}
+};
 
 export default App;

@@ -1,6 +1,5 @@
 .container {
-  padding-left: 30rem;
-  padding-right: 30rem;
+  width: 100%;
 }
 
 .input {
@@ -17,21 +16,21 @@
   background-repeat: no-repeat;
   background-size: 18px 18px;
   background-position: 95% center;
-  border-radius: 50px;
+  border-radius: 2rem;
   border: 1px solid #d3d3d3;
   transition: all 250ms ease-in-out;
   backface-visibility: hidden;
   transform-style: preserve-3d;
 }
 
-input::placeholder {
+.input::placeholder {
   color: color(#d3d3d3 a(0.5));
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
 
-input:hover,
-input:focus {
+.input:hover,
+.input:focus {
   padding: 12px 0;
   outline: 0;
   border: 1px solid transparent;

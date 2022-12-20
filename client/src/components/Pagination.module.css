@@ -1,3 +1,10 @@
+a {
+  text-decoration: none;
+  color: #d3d3d3;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
 .container {
   padding-left: 30rem;
   padding-right: 30rem;

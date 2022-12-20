@@ -27,7 +27,6 @@ const ShowDetails = () => {
   const [loadedWatchProviders, setLoadedWatchProviders] = useState([]);
   const [loadedKeywords, setLoadedKeywords] = useState([]);
   const [season, setSeason] = useState(1);
-  const [episode, setEpisode] = useState(1);
   const [selected, setSelected] = useState(1);
   const [loadedSeason, setLoadedSeason] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -248,15 +247,15 @@ const ShowDetails = () => {
     });
 
   const similarShows = getPaginatedData(currentPageSimilar, loadedSimilar).map(
-    (Show) => {
+    (show) => {
       return (
         <Card
-          key={Show.id}
-          page="/Shows"
-          id={Show.id}
-          poster={`https://image.tmdb.org/t/p/w500${Show.poster_path}`}
-          title={Show.title}
-          description={Show.overview}
+          key={show.id}
+          page="/shows"
+          id={show.id}
+          poster={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
+          title={show.title}
+          description={show.overview}
           isLoading={isLoading}
         />
       );
@@ -302,7 +301,11 @@ const ShowDetails = () => {
           return (
             <Card
               episode
-              image={`https://image.tmdb.org/t/p/original${episode.still_path}`}
+              image={
+                episode.still_path
+                  ? `https://image.tmdb.org/t/p/original${episode.still_path}`
+                  : `https://image.tmdb.org/t/p/original${loadedSeason.poster_path}`
+              }
               title={episode.name}
               description={episode.overview}
               scoreStyle={ratingScore(Math.ceil(episode.vote_average * 10))}

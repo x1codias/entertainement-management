@@ -1,7 +1,7 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { IconContext } from 'react-icons';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Link } from 'react-router-dom';
 
 import styles from './Pagination.module.css';
 
@@ -21,10 +21,11 @@ const Pagination = (props) => {
         <li
           key={number}
           id={number}
-          onClick={props.onClickPage}
           className={props.currentPage === number ? styles.active : null}
         >
-          {number}
+          <Link onClick={props.onClickPage} to={`?page=${number}`}>
+            {number}
+          </Link>
         </li>
       );
     } else {
@@ -59,19 +60,38 @@ const Pagination = (props) => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${props.gridStyle}`}>
       <ul className={styles.pageNumbers}>
         {props.currentPage !== 1 && (
           <li>
-            <button onClick={props.onClickPrev}>Prev</button>
+            <Link onClick={props.onClickPrev} to={`?page=${props.prevPage}`}>
+              Prev
+            </Link>
           </li>
         )}
-        {props.minPageNumberLimit >= 1 ? <li>&hellip;</li> : null}
+        {props.minPageNumberLimit >= 1 ? (
+          <li>
+            <Link to={`?page=1`} onClick={props.onClickFirstPage}>
+              &hellip;
+            </Link>
+          </li>
+        ) : null}
         {renderPageNumbers}
-        {pages.length > props.maxPageNumberLimit ? <li>&hellip;</li> : null}
+        {pages.length > props.maxPageNumberLimit ? (
+          <li>
+            <Link
+              to={`?page=${props.lastPage}`}
+              onClick={props.onClickLastPage}
+            >
+              &hellip;
+            </Link>
+          </li>
+        ) : null}
 
         <li>
-          <button onClick={props.onClickNext}>Next</button>
+          <Link onClick={props.onClickNext} to={`?page=${props.nextPage}`}>
+            Next
+          </Link>
         </li>
       </ul>
     </div>

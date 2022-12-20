@@ -8,7 +8,7 @@ const Button = (props) => {
       <Link
         className={`button ${props.login && 'button--login'} ${
           props.signup && 'button--signup'
-        } ${props.card && 'button--card'}`}
+        } ${props.card && 'button--card'} ${props.buttonStyle}`}
         to={props.to}
         exact={props.exact}
       >
@@ -21,7 +21,7 @@ const Button = (props) => {
     <button
       className={`button ${props.login && 'button--login'} ${
         props.signup && 'button--signup'
-      } ${props.card && 'button--card'}`}
+      } ${props.card && 'button--card'} ${props.buttonStyle}`}
       type={props.type}
       onClick={props.onClick}
       disabled={props.disabled}

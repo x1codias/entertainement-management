@@ -1,16 +1,27 @@
+@font-face {
+  font-family: 'neon-tubes-2-regular';
+  src: url('https://assets.codepen.io/2585/NeonTubes2.otf') format('opentype');
+}
+
 .item {
-  background-color: #214252;
+  background-color: rgba(0, 170, 255, 0.1);
+  border: 0.8rem solid rgb(255, 181, 181);
   border-radius: 2rem;
-  height: 10rem;
-  padding-top: 1rem;
-  box-shadow: 0 0 6px rgba(33, 66, 82, 0.98), 0 0 30px rgba(202, 228, 225, 0.42),
-    0 0 12px rgba(33, 66, 82, 0.58), 0 0 12px rgba(33, 66, 82, 0.7),
-    0 0 22px rgba(33, 66, 82, 0.84), 0 0 38px rgba(33, 66, 82, 0.88),
-    0 0 60px rgba(33, 66, 82, 1);
+  height: 100%;
+  width: 100%;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #fa0000, inset 0 0 0.5rem #fa0000, 0 0 1.5rem #fa0000,
+    inset 0 0 1.5rem #fa0000, 0 0 0.5em #fa0000, inset 0 0 0.5em #fa0000,
+    0 0 0.1em #fa0000, inset 0 0 0.1em #fa0000, 0 10px 3px #000,
+    inset 0 10px 3px #000;
 }
 
 .item-title {
-  font-size: 2.4rem;
-  font-weight: 700;
+  font: 400 4.5rem 'neon-tubes-2-regular';
   margin-top: 1.5rem;
+  color: #d7e8f0;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 10px 3px #000;
 }

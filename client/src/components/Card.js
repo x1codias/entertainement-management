@@ -102,13 +102,15 @@ const Card = (props) => {
               <div className={styles.episode__content}>
                 <div className={styles.title__container}>
                   <h2 className={styles.episode__title}>{props.title}</h2>
-                  <span
-                    className={`${styles.details__rating} ${
-                      styles[`${props.scoreStyle}`]
-                    }`}
-                  >
-                    {props.score}
-                  </span>
+                  {new Date(props.airdate) < new Date() && (
+                    <span
+                      className={`${styles.details__rating} ${
+                        styles[`${props.scoreStyle}`]
+                      }`}
+                    >
+                      {props.score}
+                    </span>
+                  )}
                 </div>
                 <p className={styles.episode__description}>
                   {props.description}
@@ -118,17 +120,19 @@ const Card = (props) => {
                   Release Date:{' '}
                   <span className={styles.released}>{props.airdate}</span>
                 </p>
-                <p>
-                  <span className={styles.runtime}>
-                    {props.runtimeHours !== 0 && (
-                      <strong>{props.runtimeHours}h</strong>
-                    )}
-                    {props.runtimeMinutes !== 0 && (
-                      <strong>{props.runtimeMinutes}m</strong>
-                    )}
-                  </span>
-                  &nbsp; of runtime
-                </p>
+                {new Date(props.airdate) < new Date() && (
+                  <p>
+                    <span className={styles.runtime}>
+                      {props.runtimeHours !== 0 && (
+                        <strong>{props.runtimeHours}h</strong>
+                      )}
+                      {props.runtimeMinutes !== 0 && (
+                        <strong>{props.runtimeMinutes}m</strong>
+                      )}
+                    </span>
+                    &nbsp; of runtime
+                  </p>
+                )}
               </div>
             </Fragment>
           )}

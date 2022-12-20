@@ -1,8 +1,18 @@
+@font-face {
+  font-family: 'neon-tubes-2-regular';
+  src: url('https://assets.codepen.io/2585/NeonTubes2.otf') format('opentype');
+}
+
 .welcome--section {
-  max-width: 120rem;
+  width: 100%;
   height: 100vh;
-  padding: 35rem 3.2rem;
-  margin: 0 auto;
+  background: #112 url('../assets/background.jpg') center no-repeat;
+  background-size: cover;
+  padding-left: 14rem;
+  margin-top: -9.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .grid {
@@ -11,10 +21,7 @@
   margin-bottom: 4.5rem;
   margin-top: 4.5rem;
   text-align: center;
-}
-
-.grid--5-cols {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, minmax(auto, 25rem));
 }
 
 .centered {
@@ -22,12 +29,23 @@
 }
 
 .welcome {
-  font-size: 4.5rem;
-  font-weight: 900;
   margin-bottom: 3rem;
+  font: 400 15rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 10px 3px #000;
+}
+
+.icon {
+  width: 4.8rem;
+  height: 4.8rem;
+  fill: #d7e8f0;
+  filter: drop-shadow(0 0 1rem #00aaff);
 }
 
 .manage {
-  font-size: 3.2rem;
-  font-weight: 700;
+  font: 400 10rem 'Vibur';
+  color: #d7e8f0;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 10px 3px #000;
 }

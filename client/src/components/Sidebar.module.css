@@ -119,13 +119,8 @@ li:hover .nav__link span {
 }
 
 .wrapper {
-  min-height: 100vh;
   height: 100%;
-  min-width: 100vw;
   width: 100%;
-  padding-left: 140px;
-  margin-top: 0;
-  background-size: cover;
-  background-position: center center;
   transition: transform 400ms, opacity 400ms;
+  position: relative;
 }

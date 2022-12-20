@@ -19,14 +19,21 @@
 .button--login,
 .button--login:link,
 .button--login:visited {
-  background: #af2d2d;
-  border-color: #af2d2d;
+  background-color: transparent;
+  border: 3px solid rgb(255, 181, 181);
+  color: #d7e8f0;
+  transition: box-shadow 0.3s, text-shadow 0.3s;
 }
 
 .button--login:hover,
 .button--login:active {
-  background: #f05454;
-  border-color: #f05454;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #fa0000, inset 0 0 0.5rem #fa0000, 0 0 1.5rem #fa0000,
+    inset 0 0 1.5rem #fa0000, 0 0 0.5em #fa0000, inset 0 0 0.5em #fa0000,
+    0 0 0.1em #fa0000, inset 0 0 0.1em #fa0000, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 5px 3px #000;
 }
 
 .button--signup,

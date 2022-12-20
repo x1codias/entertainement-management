@@ -1,128 +1,259 @@
+@font-face {
+  font-family: 'neon-tubes-2-regular';
+  src: url('https://assets.codepen.io/2585/NeonTubes2.otf') format('opentype');
+}
+
 .container {
+  width: 100%;
+  height: 100vh;
+  margin-top: -9.3rem;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  background: #112 url('../assets/background.jpg') center no-repeat;
+  background-size: cover;
 }
 
 .auth {
-  max-width: 140rem;
-  margin: 8rem auto;
-  max-height: 50rem;
+  width: 140rem;
+  margin: auto;
+  height: 70rem;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background: rgba(6, 40, 61, 0.3);
+  background-color: rgba(0, 170, 255, 0.1);
+  border: 1rem solid rgb(255, 181, 181);
   border-radius: 2rem;
   padding: 10rem 5rem;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #fa0000, inset 0 0 0.5rem #fa0000, 0 0 1.5rem #fa0000,
+    inset 0 0 1.5rem #fa0000, 0 0 0.5em #fa0000, inset 0 0 0.5em #fa0000,
+    0 0 0.1em #fa0000, inset 0 0 0.1em #fa0000, 0 10px 3px #000,
+    inset 0 10px 3px #000;
 }
 
-.auth--have-account {
+.auth--have-account-signup {
   padding: 2rem 1rem;
   margin-right: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4.8rem;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.auth--have-account__title {
-  font-size: 3rem;
-  font-weight: 300;
-  margin-bottom: 2rem;
+.auth--have-account-login {
+  padding: 2rem 1rem;
+  margin-right: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4.8rem;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.auth--have-account__title_signup {
+  font: 400 6rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 10px 3px #000;
+  margin-bottom: 3rem;
+}
+
+.auth--have-account__title_login {
+  font: 400 6rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 10px 3px #000;
+  margin-bottom: 3rem;
+}
+
+.auth--have-account-login .auth--have-account__title_login {
+  text-align: end;
 }
 
 .auth--have-account__text {
-  font-size: 1.5rem;
-  margin-bottom: 4rem;
+  font: 700 5rem 'Vibur';
+  color: #d7e8f0;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 10px 3px #000;
+  margin-bottom: 6rem;
 }
 
-.auth--form {
-  height: 60rem;
-  padding: 2rem 3rem;
+.switch_button {
+  background-color: transparent;
+  border: 0.5rem solid #d7e8f0;
+  border-radius: 1rem;
+  font: 400 2.4rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
+  transition: all 0.3s;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #00aaff, inset 0 0 0.5rem #00aaff, 0 0 1.5rem #00aaff,
+    inset 0 0 1.5rem #00aaff, 0 0 0.5em #00aaff, inset 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, inset 0 0 0.1em #00aaff, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 5px 3px #000;
+  transition: all 0.3s;
+  animation: blink linear infinite 3s;
+}
+
+.switch_button:hover {
+  animation: none;
+}
+
+@keyframes blink {
+  78% {
+    color: inherit;
+    text-shadow: inherit;
+    box-shadow: inherit;
+  }
+  79% {
+    color: #333;
+  }
+  80% {
+    text-shadow: none;
+    box-shadow: none;
+  }
+  81% {
+    color: inherit;
+    text-shadow: inherit;
+    box-shadow: inherit;
+  }
+  82% {
+    color: #333;
+    text-shadow: none;
+    box-shadow: none;
+  }
+  83% {
+    color: inherit;
+    text-shadow: inherit;
+    box-shadow: inherit;
+  }
+  92% {
+    color: #333;
+    text-shadow: none;
+    box-shadow: none;
+  }
+  92.5% {
+    color: inherit;
+    text-shadow: inherit;
+    box-shadow: inherit;
+  }
+}
+
+.auth--form-signup {
+  height: 80rem;
+  width: 70%;
+  padding: 6rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  align-items: flex-start;
-  background-color: rgba(6, 40, 61, 1);
+  align-items: center;
+  background-color: rgba(255, 0, 0, 0.1);
   border-radius: 2rem;
+  border: 1rem solid #d7e8f0;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #00aaff, inset 0 0 0.5rem #00aaff, 0 0 1.5rem #00aaff,
+    inset 0 0 1.5rem #00aaff, 0 0 0.5em #00aaff, inset 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, inset 0 0 0.1em #00aaff, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+}
+
+.auth--form-login {
+  height: 80rem;
+  width: 70%;
+  padding: 6rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 2rem;
+  border: 1rem solid #d7e8f0;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #00aaff, inset 0 0 0.5rem #00aaff, 0 0 1.5rem #00aaff,
+    inset 0 0 1.5rem #00aaff, 0 0 0.5em #00aaff, inset 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, inset 0 0 0.1em #00aaff, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  animation: slideLoginFormOut linear 1s;
 }
 
 .auth--form__login {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5rem;
+  text-align: start;
+  gap: 1rem;
 }
 
 .auth--form__title {
-  font-size: 3rem;
-  font-weight: 300;
-  color: #f05454;
-}
-
-.auth--form__group {
-  position: relative;
-  padding: 15px 0 0;
-  width: 95%;
-}
-
-.auth--form__input {
-  width: 100%;
-  border: 0;
-  border-bottom: 2px solid #9b9b9b;
-  outline: 0;
-  font-size: 1.3rem;
-  color: #fff;
-  padding: 7px 0;
-  background: transparent;
-}
-
-.auth--form__input::placeholder {
-  color: transparent;
-}
-
-.auth--form__input:placeholder-shown ~ .auth--form__label {
-  font-size: 1.3rem;
-  cursor: text;
-  top: 20px;
-}
-
-.auth--form__label {
-  position: absolute;
-  top: 0;
-  display: block;
-  transition: 0.2s;
-  font-size: 1rem;
-  color: #9b9b9b;
-}
-
-.auth--form__input:focus {
-  padding-bottom: 6px;
-  font-weight: 700;
-  border-width: 3px;
-  border-image: linear-gradient(to right, #f05454, #ce6262);
-  border-image-slice: 1;
-}
-
-.auth--form__input:focus ~ .auth--form__label {
-  position: absolute;
-  top: 0;
-  display: block;
-  transition: 0.2s;
-  font-size: 1rem;
-  color: #f05454;
-  font-weight: 700;
-}
-
-.auth--form__input:required,
-.auth--form__input:invalid {
-  box-shadow: none;
+  font: 400 5rem 'neon-tubes-2-regular';
+  color: #d7e8f0;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 10px 3px #000;
+  margin-bottom: 3rem;
 }
 
 .auth--form__btn-group {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   margin-top: 5rem;
 }
 
-.animate {
-  transition: transform 0.35s ease-in-out;
+.forgot_password {
+  background-color: transparent;
+  font: 400 2.4rem 'neon-tubes-2-regular';
+  color: rgb(255, 181, 181);
+  transition: all 0.3s;
+}
+
+.forgot_password:hover {
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff0000, 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, 0 5px 3px #000;
+}
+
+.cta_button {
+  background-color: transparent;
+  height: fit-content;
+  border: 0.5rem solid rgb(255, 181, 181);
+  border-radius: 1rem;
+  font: 400 2.4rem 'neon-tubes-2-regular';
+  color: #d7e8f0;
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #ff0000, inset 0 0 0.5rem #ff0000, 0 0 1.5rem #ff0000,
+    inset 0 0 1.5rem #ff0000, 0 0 0.5em #ff0000, inset 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, inset 0 0 0.1em #ff0000, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 5px 3px #000;
+  transition: all 0.3s;
+  animation: blink linear infinite 3s;
+}
+
+.cta_button:hover {
+  box-shadow: 0 0 20px, inset 0 0 20px, 0 0 2px, inset 0 0 2px,
+    0 0 0.5rem #ff0000, inset 0 0 0.5rem #ff0000, 0 0 1.5rem #ff0000,
+    inset 0 0 1.5rem #ff0000, 0 0 0.5em #ff0000, inset 0 0 0.5em #ff0000,
+    0 0 0.1em #ff0000, inset 0 0 0.1em #ff0000, 0 10px 3px #000,
+    inset 0 10px 3px #000;
+  text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
+    0 0 0.1em #00aaff, 0 5px 3px #000;
+  animation: none;
+}
+
+@keyframes showSignUpText {
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideLoginFormOut {
+  100% {
+    transform: translateX(-50%);
+  }
 }

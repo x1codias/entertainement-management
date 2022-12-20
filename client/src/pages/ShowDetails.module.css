@@ -48,6 +48,7 @@ genres:
   box-sizing: border-box;
   width: 100%;
   padding-right: 20rem;
+  padding-left: 14rem;
 }
 
 .background {
@@ -433,36 +434,6 @@ genres:
   background-color: #3b3486;
 }
 
-/*.history {
-  color: #9e7676;
-  border-color: #9e7676;
-}
-
-.history:hover {
-  color: #444;
-  background-color: #9e7676;
-}*/
-
-/*.horror {
-  color: #432c7a;
-  border-color: #432c7a;
-}
-
-.horror:hover {
-  color: #444;
-  background-color: #432c7a;
-}*/
-
-/*.music {
-  color: #eb6440;
-  border-color: #eb6440;
-}
-
-.music:hover {
-  color: #444;
-  background-color: #eb6440;
-}*/
-
 .mystery {
   color: #251b37;
   border-color: #251b37;
@@ -493,16 +464,6 @@ genres:
   background-color: #ff6464;
 }
 
-/*.romance {
-  color: #ffb9b9;
-  border-color: #ffb9b9;
-}
-
-.romance:hover {
-  color: #444;
-  background-color: #ffb9b9;
-}*/
-
 .sci-fi-fantasy {
   color: #3f0071;
   border-color: #3f0071;
@@ -512,16 +473,6 @@ genres:
   color: #444;
   background-color: #3f0071;
 }
-
-/*.thriller {
-  color: #fffae7;
-  border-color: #fffae7;
-}
-
-.thriller:hover {
-  color: #444;
-  background-color: #fffae7;
-}*/
 
 .soap {
   color: #ff8787;
