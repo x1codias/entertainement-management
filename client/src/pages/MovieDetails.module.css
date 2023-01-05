@@ -53,7 +53,7 @@ genres:
 
 .background {
   width: 100vw;
-  height: 60rem;
+  height: 70rem;
   margin-left: -10rem;
   margin-top: -10rem;
   position: relative;
@@ -81,7 +81,7 @@ genres:
 }
 
 .content {
-  margin-top: -30rem;
+  margin-top: -40rem;
   z-index: 2;
   font-size: 1.7rem;
   display: flex;
@@ -100,6 +100,11 @@ genres:
 .details__title {
   font-size: 7rem;
   font-weight: 900;
+}
+
+.subtitle {
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 .title__content {
@@ -130,6 +135,57 @@ genres:
   background-color: #d3d3d3;
   border: 2px solid #d3d3d3;
   padding: 0.5rem 1.2rem;
+}
+
+.title__btn--group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.title__btn {
+  width: fit-content;
+  padding: 0.4rem 1.7rem 0.4rem 1.7rem;
+  background-color: #d3d3d3;
+  outline: none;
+  border: none;
+  border-radius: 2rem;
+  background: linear-gradient(to right bottom, #333 30%, #d3d3d3 30%);
+  background-size: 500% 300%;
+  background-position: right top;
+  box-shadow: none;
+  transition: background-position 0.8s ease-in-out, scale 0.5s, box-shadow 0.5s;
+}
+
+.title__btn--label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.title__btn--label input {
+  appearance: none;
+  cursor: pointer;
+}
+
+.title__btn--icon {
+  color: #444;
+  text-align: center;
+  transition: all 1s ease-in-out;
+}
+
+.title__btn:hover {
+  cursor: pointer;
+  background-position: left top;
+  scale: 1.05;
+  box-shadow: 0 0.25rem 0.25rem rgba(255, 255, 255, 0.1),
+    0 0 1rem rgba(170, 170, 170, 1);
+}
+
+.title__btn:hover .title__btn--icon {
+  color: #d3d3d3;
 }
 
 .platforms {

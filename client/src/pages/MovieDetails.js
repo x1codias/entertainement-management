@@ -2,12 +2,17 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo } from 'react-icons/si';
-import { FaGooglePlay, FaYoutube } from 'react-icons/fa';
+import {
+  FaGooglePlay,
+  FaYoutube,
+  FaRegEye,
+  FaRegEyeSlash,
+} from 'react-icons/fa';
 import { RiNetflixFill } from 'react-icons/ri';
-import { CSSTransition } from 'react-transition-group';
+import { BsBookmarkPlus, BsBookmarkDash } from 'react-icons/bs';
+import { TbHeart, TbHeartOff } from 'react-icons/tb';
 
 import LoadingSpinner from '../components/LoadingSpinner';
-import Table from '../components/Table';
 import Gallery from '../components/Gallery';
 import Card from '../components/Card';
 import { useHttpClient } from '../hooks/http-hook';
@@ -17,7 +22,7 @@ import Pagination from '../components/Pagination';
 import styles from './MovieDetails.module.css';
 import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
 
-const Details = () => {
+const MovieDetails = () => {
   const { id } = useParams();
   const [loadedMovie, setLoadedMovie] = useState({});
   const [loadedCast, setLoadedCast] = useState([]);
@@ -27,8 +32,7 @@ const Details = () => {
   const [loadedSimilar, setLoadedSimilar] = useState([]);
   const [loadedWatchProviders, setLoadedWatchProviders] = useState();
   const [loadedKeywords, setLoadedKeywords] = useState();
-  const [changing, setChanging] = useState(true);
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageVideo,
     prevHandler: prevHandlerVideo,
@@ -98,6 +102,15 @@ const Details = () => {
     };
     fetchMovie();
   }, [sendRequest, id]);
+
+  const addToFavoritesHandler = (e) => {
+    e.preventDefault();
+    console.log('Added to the favourites');
+  };
+
+  const watchedChangeHandler = (e) => {
+    console.log(`Marked as ${e.target.value}`);
+  };
 
   const platforms =
     loadedWatchProviders &&
@@ -291,8 +304,70 @@ const Details = () => {
                   {runtimeHours !== 0 && <strong>{runtimeHours}h</strong>}
                   {runtimeMinutes !== 0 && <strong>{runtimeMinutes}m</strong>}
                 </span>
-                &nbsp; of runtime
               </p>
+              <div className={styles['title__btn--group']}>
+                <div
+                  className={styles['title__btn']}
+                  title="Add movie to watched list"
+                >
+                  <label htmlFor="eye" className={styles['title__btn--label']}>
+                    <input
+                      id="eye"
+                      name="eye"
+                      type="checkbox"
+                      onChange={watchedChangeHandler}
+                      value="watched"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      <FaRegEye />
+                    </IconContext.Provider>
+                  </label>
+                </div>
+                <button
+                  onClick={addToFavoritesHandler}
+                  className={styles['title__btn']}
+                  title="Add movie to favorites list"
+                >
+                  <IconContext.Provider
+                    value={{
+                      size: '2.5rem',
+                      className: `${styles['title__btn--icon']}`,
+                    }}
+                  >
+                    <TbHeart />
+                  </IconContext.Provider>
+                </button>
+                <div
+                  className={styles['title__btn']}
+                  title="Add movie to watch list"
+                >
+                  <label
+                    htmlFor="bookmark"
+                    className={styles['title__btn--label']}
+                  >
+                    <input
+                      id="bookmark"
+                      name="bookmark"
+                      type="checkbox"
+                      onChange={watchedChangeHandler}
+                      value="toWatch"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      <BsBookmarkPlus />
+                    </IconContext.Provider>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
           <div className={styles.tags}>{tags}</div>
@@ -417,4 +492,4 @@ const Details = () => {
   );
 };
 
-export default Details;
+export default MovieDetails;

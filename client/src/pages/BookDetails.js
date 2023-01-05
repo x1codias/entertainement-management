@@ -1,6 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
+import { IconContext } from 'react-icons';
+import { FaStar, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import { BsBookmarkPlus, BsBookmarkDash } from 'react-icons/bs';
+import { TbHeart, TbHeartOff } from 'react-icons/tb';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useHttpClient } from '../hooks/http-hook';
@@ -11,7 +14,7 @@ const BookDetails = () => {
   const stars = Array(5).fill(0);
   const { id } = useParams();
   const [loadedBook, setLoadedBook] = useState({});
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -26,6 +29,15 @@ const BookDetails = () => {
     };
     fetchBook();
   }, [sendRequest, id]);
+
+  const addToFavoritesHandler = (e) => {
+    e.preventDefault();
+    console.log('Added to the favourites');
+  };
+
+  const watchedChangeHandler = (e) => {
+    console.log(`Marked as ${e.target.value}`);
+  };
 
   const authors =
     loadedBook.volumeInfo &&
@@ -123,6 +135,72 @@ const BookDetails = () => {
                   </span>{' '}
                   pages
                 </p>
+                <div className={styles['title__btn--group']}>
+                  <div
+                    className={styles['title__btn']}
+                    title="Add movie to watched list"
+                  >
+                    <label
+                      htmlFor="eye"
+                      className={styles['title__btn--label']}
+                    >
+                      <input
+                        id="eye"
+                        name="eye"
+                        type="checkbox"
+                        onChange={watchedChangeHandler}
+                        value="watched"
+                      />
+                      <IconContext.Provider
+                        value={{
+                          size: '2.5rem',
+                          className: `${styles['title__btn--icon']}`,
+                        }}
+                      >
+                        <FaRegEye />
+                      </IconContext.Provider>
+                    </label>
+                  </div>
+                  <button
+                    onClick={addToFavoritesHandler}
+                    className={styles['title__btn']}
+                    title="Add movie to favorites list"
+                  >
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      <TbHeart />
+                    </IconContext.Provider>
+                  </button>
+                  <div
+                    className={styles['title__btn']}
+                    title="Add movie to watch list"
+                  >
+                    <label
+                      htmlFor="bookmark"
+                      className={styles['title__btn--label']}
+                    >
+                      <input
+                        id="bookmark"
+                        name="bookmark"
+                        type="checkbox"
+                        onChange={watchedChangeHandler}
+                        value="toWatch"
+                      />
+                      <IconContext.Provider
+                        value={{
+                          size: '2.5rem',
+                          className: `${styles['title__btn--icon']}`,
+                        }}
+                      >
+                        <BsBookmarkPlus />
+                      </IconContext.Provider>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
             <div className={styles.container}>

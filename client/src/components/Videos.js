@@ -18,7 +18,6 @@ const Videos = (props) => {
                     : video.data.max
                 }
                 title="Youtube video"
-                frameBorder="0"
                 allowFullScreen
               />
             </div>

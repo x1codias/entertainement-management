@@ -14,6 +14,8 @@ import {
   FaDesktop,
   FaNeos,
   FaGlobe,
+  FaRegEye,
+  FaRegEyeSlash,
 } from 'react-icons/fa';
 import { GrAppleAppStore } from 'react-icons/gr';
 import {
@@ -25,6 +27,8 @@ import {
   SiWeb3Dotjs,
 } from 'react-icons/si';
 import { AiFillWindows } from 'react-icons/ai';
+import { BsBookmarkPlus, BsBookmarkDash } from 'react-icons/bs';
+import { TbHeart, TbHeartOff } from 'react-icons/tb';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import Card from '../components/Card';
@@ -124,6 +128,15 @@ const GameDetails = () => {
     currentPageInstallments,
     currentPageTeam,
   ]);
+
+  const addToFavoritesHandler = (e) => {
+    e.preventDefault();
+    console.log('Added to the favourites');
+  };
+
+  const watchedChangeHandler = (e) => {
+    console.log(`Marked as ${e.target.value}`);
+  };
 
   const platforms =
     loadedGame.parent_platforms &&
@@ -321,6 +334,72 @@ const GameDetails = () => {
                 <span className={styles.playtime}>
                   {loadedGame.playtime} playable hours
                 </span>
+                <div className={styles['title__btn--group']}>
+                  <div
+                    className={styles['title__btn']}
+                    title="Add movie to watched list"
+                  >
+                    <label
+                      htmlFor="eye"
+                      className={styles['title__btn--label']}
+                    >
+                      <input
+                        id="eye"
+                        name="eye"
+                        type="checkbox"
+                        onChange={watchedChangeHandler}
+                        value="watched"
+                      />
+                      <IconContext.Provider
+                        value={{
+                          size: '2.5rem',
+                          className: `${styles['title__btn--icon']}`,
+                        }}
+                      >
+                        <FaRegEye />
+                      </IconContext.Provider>
+                    </label>
+                  </div>
+                  <button
+                    onClick={addToFavoritesHandler}
+                    className={styles['title__btn']}
+                    title="Add movie to favorites list"
+                  >
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      <TbHeart />
+                    </IconContext.Provider>
+                  </button>
+                  <div
+                    className={styles['title__btn']}
+                    title="Add movie to watch list"
+                  >
+                    <label
+                      htmlFor="bookmark"
+                      className={styles['title__btn--label']}
+                    >
+                      <input
+                        id="bookmark"
+                        name="bookmark"
+                        type="checkbox"
+                        onChange={watchedChangeHandler}
+                        value="toWatch"
+                      />
+                      <IconContext.Provider
+                        value={{
+                          size: '2.5rem',
+                          className: `${styles['title__btn--icon']}`,
+                        }}
+                      >
+                        <BsBookmarkPlus />
+                      </IconContext.Provider>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
             <div className={styles.tags}>{tags}</div>

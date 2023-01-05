@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import { IconContext } from 'react-icons';
-import { AiFillEye, AiFillHeart, AiOutlineArrowRight } from 'react-icons/ai';
-import { IoLogoGameControllerB } from 'react-icons/io';
+import { AiOutlineArrowRight } from 'react-icons/ai';
 
 import LoadingSpinner from './LoadingSpinner';
 import Button from './Button';
@@ -169,18 +168,6 @@ const Card = (props) => {
                   )}
                 </div>
               )}
-              <div className={styles['card__button--container']}>
-                <Button card>
-                  <IconContext.Provider value={{ size: '2.4rem' }}>
-                    {props.game ? <IoLogoGameControllerB /> : <AiFillEye />}
-                  </IconContext.Provider>
-                </Button>
-                <Button card>
-                  <IconContext.Provider value={{ size: '2.4rem' }}>
-                    <AiFillHeart />
-                  </IconContext.Provider>
-                </Button>
-              </div>
               <Button to={`${props.page}/${props.id}`} card>
                 Learn more
                 <IconContext.Provider value={{ size: '2.4rem' }}>
