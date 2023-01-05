@@ -11,6 +11,7 @@ const Button = (props) => {
         } ${props.card && 'button--card'} ${props.buttonStyle}`}
         to={props.to}
         exact={props.exact}
+        state={props.state}
       >
         {props.children}
       </Link>

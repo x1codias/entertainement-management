@@ -1,4 +1,5 @@
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -18,7 +19,7 @@ import {
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const { error, sendRequest, clearError } = useHttpClient();
+  const { sendRequest } = useHttpClient();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -32,6 +33,7 @@ const Auth = () => {
     },
     true
   );
+  const navigate = useNavigate();
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
@@ -78,13 +80,22 @@ const Auth = () => {
 
         console.log(responseData);
 
-        auth.login(responseData.userId, responseData.token);
+        auth.login(
+          responseData.userId,
+          responseData.email,
+          responseData.username,
+          responseData.token
+        );
+
+        navigate('/');
       } catch (err) {}
     } else {
       try {
         console.log(formState);
 
-        /*const formData = new FormData();
+        /*
+        // Use formData only when there is more than one type of data (files)
+        const formData = new FormData();
         formData.append('username', formState.inputs.username.value);
         formData.append('email', formState.inputs.email.value);
         formData.append('password', formState.inputs.password.value);*/
@@ -104,7 +115,13 @@ const Auth = () => {
 
         console.log(responseData);
 
-        auth.login(responseData.userId, responseData.token);
+        auth.login(
+          responseData.userId,
+          responseData.email,
+          responseData.username,
+          responseData.token
+        );
+        navigate('/');
       } catch (err) {}
     }
   };

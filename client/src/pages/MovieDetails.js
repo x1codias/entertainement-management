@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo } from 'react-icons/si';
 import { FaGooglePlay, FaYoutube } from 'react-icons/fa';

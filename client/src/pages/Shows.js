@@ -5,11 +5,13 @@ import Card from '../components/Card';
 import Grid from '../components/Grid';
 import Search from '../components/Search';
 import Pagination from '../components/Pagination';
+import Sort from '../components/Sort';
+import Filter from '../components/Filter';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
-import Sort from '../components/Sort';
-import Filter from '../components/Filter';
+import { useSort } from '../hooks/sort-hook';
+import { useFilter } from '../hooks/filter-hook';
 
 import styles from './Shows.module.css';
 import showCape from '../assets/show.jpg';
@@ -17,20 +19,28 @@ import showCape from '../assets/show.jpg';
 const Shows = () => {
   const location = useLocation();
   const [loadedShows, setLoadedShows] = useState([]);
-  const [selectedSort, setSelectedSort] = useState();
   const [loadedGenres, setLoadedGenres] = useState([]);
-  const [selectedGenres, setSelectedGenres] = useState([]);
+  const {
+    selectedOptions: selectedGenres,
+    multipleCheckChangeHandler: genreChangeHandler,
+  } = useFilter();
   const [loadedCertifications, setLoadedCertifications] = useState([]);
-  const [selectedCertifications, setSelectedCertifications] = useState([]);
-  const [selectedDayRange, setSelectedDayRange] = useState({
-    from: null,
-    to: null,
-  });
+  const {
+    selectedOption: selectedCertification,
+    checkChangeHandler: certificationChangeHandler,
+  } = useFilter();
+  const { selectedDayRange, setSelectedDayRange } = useFilter();
   const [loadedStreams, setLoadedStreams] = useState([]);
-  const [selectedStreams, setSelectedStreams] = useState([]);
-  const [selectedStates, setSelectedStates] = useState([]);
+  const {
+    selectedOptions: selectedStreams,
+    multipleCheckChangeHandler: streamChangeHandler,
+  } = useFilter();
+  const {
+    selectedOptions: selectedStates,
+    multipleCheckChangeHandler: stateChangeHandler,
+  } = useFilter();
   const { inputText, changeHandler } = useSearch();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage,
     totalPages,
@@ -42,7 +52,29 @@ const Shows = () => {
     pageHandler,
     prevHandler,
     nextHandler,
+    firstPageHandler,
+    lastPageHandler,
   } = usePagination('show');
+  const today = new Date();
+  const urlRelevant = `${process.env.REACT_APP_TMDB_BASE_URL}3/trending/tv/week?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlPopular = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/popular?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlTopRated = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/top_rated?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlLatest = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/on_the_air?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlUpcoming = `${
+    process.env.REACT_APP_TMDB_BASE_URL
+  }3/discover/tv?first_air_date.gte=${today.getFullYear()}-${
+    today.getMonth() + 1
+  }-${today.getDate()}&page=${currentPage}&page=${currentPage}&api_key=${
+    process.env.REACT_APP_TMDB_API_KEY
+  }`;
+  const { selectedSort, sortClickHandler } = useSort(
+    urlRelevant,
+    urlPopular,
+    urlTopRated,
+    urlLatest,
+    urlUpcoming,
+    setLoadedShows
+  );
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -96,56 +128,6 @@ const Shows = () => {
     setDataLength,
   ]);
 
-  const sortChangeHandler = (e) => {
-    setSelectedSort(e.target.value);
-  };
-
-  const genreChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedGenres([...selectedGenres, value]);
-    } else {
-      setSelectedGenres(selectedGenres.filter((e) => e !== value));
-    }
-  };
-
-  const certificationChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedCertifications([...selectedCertifications, value]);
-    } else {
-      setSelectedCertifications(
-        selectedCertifications.filter((e) => e !== value)
-      );
-    }
-  };
-
-  const stateChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedStates([...selectedStates, value]);
-    } else {
-      setSelectedStates(selectedStates.filter((e) => e !== value));
-    }
-  };
-
-  const streamChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedStreams([...selectedStreams, value]);
-    } else {
-      setSelectedStreams(selectedStreams.filter((e) => e !== value));
-    }
-  };
-
   const submitFormHandler = useCallback(
     async (e) => {
       e.preventDefault();
@@ -153,12 +135,9 @@ const Shows = () => {
         selectedGenres && selectedGenres.length !== 0
           ? `&with_genres=${selectedGenres.join(',')}&`
           : '';
-      const certifications =
-        selectedCertifications && selectedCertifications.length !== 0
-          ? `&certification_country=US&certification=${selectedCertifications.join(
-              ','
-            )}&`
-          : '';
+      const certifications = selectedCertification
+        ? `&certification_country=US&certification=${selectedCertification}&`
+        : '';
       const toDate =
         selectedDayRange &&
         selectedDayRange.from !== null &&
@@ -221,7 +200,7 @@ const Shows = () => {
     [
       selectedGenres,
       currentPage,
-      selectedCertifications,
+      selectedCertification,
       selectedDayRange,
       selectedStreams,
       selectedStates,
@@ -251,7 +230,11 @@ const Shows = () => {
     <section className={styles.shows}>
       <Grid>
         <div className={styles.sort_search}>
-          <Sort gridStyle={styles.sort} />
+          <Sort
+            gridStyle={styles.sort}
+            onClickSelected={sortClickHandler}
+            selected={selectedSort}
+          />
           <Search
             onChange={changeHandler}
             initialValue={inputText}
@@ -260,7 +243,6 @@ const Shows = () => {
         </div>
         <Filter
           show
-          onSortChange={sortChangeHandler}
           onGenreChange={genreChangeHandler}
           genres={loadedGenres}
           onCertificationChange={certificationChangeHandler}
@@ -284,6 +266,10 @@ const Shows = () => {
             maxPageNumberLimit={maxPageNumberLimit}
             minPageNumberLimit={minPageNumberLimit}
             gridStyle={styles.pagination}
+            onClickFirstPage={firstPageHandler}
+            onClickLastPage={lastPageHandler}
+            prevPage={currentPage - 1}
+            nextPage={currentPage + 1}
           />
         )}
       </Grid>

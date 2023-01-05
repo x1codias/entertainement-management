@@ -34,6 +34,8 @@ const Books = () => {
     pageHandler,
     prevHandler,
     nextHandler,
+    firstPageHandler,
+    lastPageHandler,
   } = usePagination('book');
 
   useEffect(() => {
@@ -125,6 +127,10 @@ const Books = () => {
             maxPageNumberLimit={maxPageNumberLimit}
             minPageNumberLimit={minPageNumberLimit}
             gridStyle={styles.pagination}
+            onClickFirstPage={firstPageHandler}
+            onClickLastPage={lastPageHandler}
+            prevPage={currentPage - 1}
+            nextPage={currentPage + 1}
           />
         )}
       </Grid>

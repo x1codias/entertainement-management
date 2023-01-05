@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 
 import { RiMovie2Fill } from 'react-icons/ri';
@@ -11,12 +11,18 @@ import styles from './Sidebar.module.css';
 import { Fragment } from 'react';
 
 const Sidebar = (props) => {
+  const { pathname } = useLocation();
+
   return (
     <Fragment>
       <nav className={styles['nav__container']}>
         <ul className={styles.nav}>
           <li className={styles['nav__item']}>
-            <NavLink className={styles['nav__link']} to={`/movies`}>
+            <NavLink
+              className={styles['nav__link']}
+              to={`/movies`}
+              state={{ from: pathname }}
+            >
               <svg>
                 <IconContext.Provider
                   value={{ size: '26px', className: 'nav__icon' }}
@@ -28,7 +34,11 @@ const Sidebar = (props) => {
             </NavLink>
           </li>
           <li className={styles['nav__item']}>
-            <NavLink className={styles['nav__link']} to="/shows">
+            <NavLink
+              className={styles['nav__link']}
+              to="/shows"
+              state={{ from: pathname }}
+            >
               <svg>
                 <IconContext.Provider
                   value={{ size: '26px', className: 'nav__icon' }}
@@ -52,7 +62,11 @@ const Sidebar = (props) => {
             </NavLink>
           </li> */}
           <li className={styles['nav__item']}>
-            <NavLink className={styles['nav__link']} to="/books">
+            <NavLink
+              className={styles['nav__link']}
+              to="/books"
+              state={{ from: pathname }}
+            >
               <svg>
                 <IconContext.Provider
                   value={{ size: '26px', className: 'nav__icon' }}
@@ -64,7 +78,11 @@ const Sidebar = (props) => {
             </NavLink>
           </li>
           <li className={styles['nav__item']}>
-            <NavLink className={styles['nav__link']} to="/games">
+            <NavLink
+              className={styles['nav__link']}
+              to="/games"
+              state={{ from: pathname }}
+            >
               <svg>
                 <IconContext.Provider
                   value={{ size: '26px', className: 'nav__icon' }}

@@ -16,6 +16,7 @@ import BookDetails from './pages/BookDetails';
 import GameDetails from './pages/GameDetails';
 import { useAuth } from './hooks/auth-hook';
 import { AuthContext } from './context/auth-context';
+import Profile from './pages/Profile';
 
 const App = () => {
   const { token, login, logout, userId } = useAuth();
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/games" element={<Games />} />
           <Route path="/games/:id" element={<GameDetails />} />
+          <Route path="/profile/:uname" element={<Profile />} />
         </Routes>
       </Sidebar>
     </AuthContext.Provider>

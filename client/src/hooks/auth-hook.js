@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 let logoutTimer;
 
@@ -6,8 +7,9 @@ export const useAuth = () => {
   const [token, setToken] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userId, setUserId] = useState(false);
+  const navigate = useNavigate();
 
-  const login = useCallback((uid, token, expirationDate) => {
+  const login = useCallback((uid, email, username, token, expirationDate) => {
     setToken(token);
     setUserId(uid);
     const tokenExpirationDate =
@@ -17,6 +19,8 @@ export const useAuth = () => {
       'userData',
       JSON.stringify({
         userId: uid,
+        email: email,
+        username: username,
         token: token,
         expiration: tokenExpirationDate.toISOString(),
       })
@@ -49,6 +53,8 @@ export const useAuth = () => {
     ) {
       login(
         storedData.userId,
+        storedData.email,
+        storedData.username,
         storedData.token,
         new Date(storedData.expiration)
       );

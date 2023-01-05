@@ -13,22 +13,28 @@ import { useSearch } from '../hooks/search-hook';
 
 import styles from './Movies.module.css';
 import movieCape from '../assets/movie.jpg';
-// TODO: pagination on url
+import { useSort } from '../hooks/sort-hook';
+import { useFilter } from '../hooks/filter-hook';
 
 const Movies = () => {
   const location = useLocation();
   const [loadedMovies, setLoadedMovies] = useState([]);
-  const [selectedSort, setSelectedSort] = useState('');
   const [loadedGenres, setLoadedGenres] = useState([]);
-  const [checkedGenres, setCheckedGenres] = useState([]);
+  const {
+    selectedOptions: checkedGenres,
+    multipleCheckChangeHandler: genreChangeHandler,
+  } = useFilter();
   const [loadedCertifications, setLoadedCertifications] = useState([]);
-  const [selectedCertifications, setSelectedCertifications] = useState([]);
-  const [selectedDayRange, setSelectedDayRange] = useState({
-    from: null,
-    to: null,
-  });
+  const {
+    selectedOption: selectedCertifications,
+    checkChangeHandler: certificationChangeHandler,
+  } = useFilter();
+  const { selectedDayRange, setSelectedDayRange } = useFilter();
   const [loadedStreams, setLoadedStreams] = useState([]);
-  const [selectedStreams, setSelectedStreams] = useState([]);
+  const {
+    selectedOptions: selectedStreams,
+    multipleCheckChangeHandler: streamChangeHandler,
+  } = useFilter();
   const { inputText, changeHandler } = useSearch();
   const { isLoading, sendRequest } = useHttpClient();
   const {
@@ -45,6 +51,32 @@ const Movies = () => {
     firstPageHandler,
     lastPageHandler,
   } = usePagination('movie');
+  const today = new Date();
+  const urlRelevant = `${process.env.REACT_APP_TMDB_BASE_URL}3/trending/movie/week?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlPopular = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/popular?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlTopRated = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/top_rated?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlLatest = `${
+    process.env.REACT_APP_TMDB_BASE_URL
+  }3/discover/movie?region=PT&sort_by=release_date.desc&release_date.lte=${today.getFullYear()}-${
+    today.getMonth() + 1
+  }-${today.getDate()}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+  const urlUpcoming = `${
+    process.env.REACT_APP_TMDB_BASE_URL
+  }3/discover/movie?primary_release_date.gte=${today.getFullYear()}-${
+    today.getMonth() + 1
+  }-${today.getDate()}&page=${currentPage}&api_key=${
+    process.env.REACT_APP_TMDB_API_KEY
+  }`;
+  const { selectedSort, sortClickHandler } = useSort(
+    urlRelevant,
+    urlPopular,
+    urlTopRated,
+    urlLatest,
+    urlUpcoming,
+    setLoadedMovies
+  );
+
+  console.log(urlUpcoming);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -56,10 +88,6 @@ const Movies = () => {
         const genresData = await sendRequest(urlGenres);
         const streamsData = await sendRequest(urlStreams);
         const certificationsData = await sendRequest(urlCertifications);
-
-        console.log(genresData);
-        console.log(streamsData);
-        console.log(certificationsData);
 
         setLoadedGenres(genresData.genres);
         setLoadedStreams(streamsData.results);
@@ -93,106 +121,6 @@ const Movies = () => {
     fetchMovies();
   }, [sendRequest, inputText, currentPage, setTotalPages, setDataLength]);
 
-  const sortClickHandler = useCallback(
-    async (e) => {
-      e.preventDefault();
-      setSelectedSort(e.target.outerText);
-      console.log(selectedSort);
-
-      const urlRelevant = `${process.env.REACT_APP_TMDB_BASE_URL}3/trending/movie/week?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-      const urlPopular = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/popular?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-      const urlTopRated = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/top_rated?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-      const urlLatest = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/latest?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-      const urlUpcoming = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/upcoming?page=${currentPage}&api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
-
-      if (selectedSort === 'Relevance') {
-        try {
-          const relevantData = await sendRequest(urlRelevant);
-
-          console.log(relevantData);
-
-          setLoadedMovies(relevantData.results);
-        } catch (err) {}
-      }
-
-      if (selectedSort === 'Popularity') {
-        try {
-          const popularData = await sendRequest(urlPopular);
-
-          console.log(popularData);
-
-          setLoadedMovies(popularData.results);
-        } catch (err) {}
-      }
-
-      if (selectedSort === 'Rating') {
-        try {
-          const topRatedData = await sendRequest(urlTopRated);
-
-          console.log(topRatedData);
-
-          setLoadedMovies(topRatedData.results);
-        } catch (err) {}
-      }
-
-      if (selectedSort === 'Latest') {
-        try {
-          const latestData = await sendRequest(urlLatest);
-
-          console.log(latestData);
-
-          setLoadedMovies(latestData.results);
-        } catch (err) {}
-      }
-
-      if (selectedSort === 'Upcoming') {
-        try {
-          const upcomingData = await sendRequest(urlUpcoming);
-
-          console.log(upcomingData);
-
-          setLoadedMovies(upcomingData.results);
-        } catch (err) {}
-      }
-    },
-    [currentPage, selectedSort, sendRequest]
-  );
-
-  const genreChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setCheckedGenres([...checkedGenres, value]);
-    } else {
-      setCheckedGenres(checkedGenres.filter((e) => e !== value));
-    }
-  };
-
-  const certificationChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedCertifications([...selectedCertifications, value]);
-    } else {
-      setSelectedCertifications(
-        selectedCertifications.filter((e) => e !== value)
-      );
-    }
-  };
-
-  const streamChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedStreams([...selectedStreams, value]);
-    } else {
-      setSelectedStreams(selectedStreams.filter((e) => e !== value));
-    }
-  };
-
   const submitFormHandler = useCallback(
     async (e) => {
       e.preventDefault();
@@ -200,12 +128,9 @@ const Movies = () => {
         checkedGenres && checkedGenres.length !== 0
           ? `&with_genres=${checkedGenres.join(',')}&`
           : '';
-      const certifications =
-        selectedCertifications && selectedCertifications.length !== 0
-          ? `&certification_country=US&certification=${selectedCertifications.join(
-              ','
-            )}&`
-          : '';
+      const certifications = selectedCertifications
+        ? `&certification_country=US&certification=${selectedCertifications}&`
+        : '';
       const toDate =
         selectedDayRange &&
         selectedDayRange.from !== null &&
@@ -248,15 +173,24 @@ const Movies = () => {
             )}&`
           : '';
 
-      const url = `${process.env.REACT_APP_TMDB_BASE_URL}3/discover/movie?api_key=${process.env.REACT_APP_TMDB_API_KEY}${genres}${certifications}${dateRange}${streams}page=${currentPage}`;
+      const filterData = {
+        checkedGenres,
+        selectedCertifications,
+        selectedDayRange,
+        selectedStreams,
+      };
 
-      console.log(url);
+      localStorage.setItem('filterData', JSON.stringify(filterData));
+
+      const url = `${process.env.REACT_APP_TMDB_BASE_URL}3/discover/movie?api_key=${process.env.REACT_APP_TMDB_API_KEY}${genres}${certifications}${dateRange}${streams}page=${currentPage}`;
 
       try {
         const responseData = await sendRequest(url);
 
         console.log(responseData);
 
+        setDataLength(responseData.total_results);
+        setTotalPages(responseData.total_pages);
         setLoadedMovies(responseData.results);
       } catch (err) {}
     },
@@ -266,6 +200,8 @@ const Movies = () => {
       selectedCertifications,
       selectedDayRange,
       selectedStreams,
+      //setDataLength,
+      //setTotalPages,
       sendRequest,
     ]
   );

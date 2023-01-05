@@ -10,26 +10,33 @@ import Filter from '../components/Filter';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
 import { useSearch } from '../hooks/search-hook';
+import { useSort } from '../hooks/sort-hook';
 
 import styles from './Games.module.css';
 import gameCape from '../assets/game.jpg';
+import { useFilter } from '../hooks/filter-hook';
 
 const Games = () => {
   const location = useLocation();
   const [loadedGames, setLoadedGames] = useState([]);
-  const [selectedSort, setSelectedSort] = useState();
   const [loadedGenres, setLoadedGenres] = useState([]);
-  const [selectedGenres, setSelectedGenres] = useState([]);
+  const {
+    selectedOptions: selectedGenres,
+    multipleCheckChangeHandler: genreChangeHandler,
+  } = useFilter();
   const [loadedPlatforms, setLoadedPlatforms] = useState([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
-  const [selectedDayRange, setSelectedDayRange] = useState({
-    from: null,
-    to: null,
-  });
+  const {
+    selectedOptions: selectedPlatforms,
+    multipleCheckChangeHandler: platformChangeHandler,
+  } = useFilter();
+  const { selectedDayRange, setSelectedDayRange } = useFilter();
   const [loadedStores, setLoadedStores] = useState([]);
-  const [selectedStores, setSelectedStores] = useState([]);
+  const {
+    selectedOptions: selectedStores,
+    multipleCheckChangeHandler: storeChangeHandler,
+  } = useFilter();
   const { inputText, changeHandler } = useSearch();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage,
     totalPages,
@@ -41,7 +48,22 @@ const Games = () => {
     pageHandler,
     prevHandler,
     nextHandler,
+    firstPageHandler,
+    lastPageHandler,
   } = usePagination('game');
+  const urlRelevant = `${process.env.REACT_APP_RAWG_BASE_URL}games/lists/main?discover=true&ordering=-relevance&page_size=20&page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+  const urlPopular = `${process.env.REACT_APP_RAWG_BASE_URL}games/lists/main?discover=true&ordering=-rating&page_size=20&page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+  const urlTopRated = `${process.env.REACT_APP_RAWG_BASE_URL}games/lists/main?discover=true&ordering=-metacritic&page_size=20&page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+  const urlLatest = `${process.env.REACT_APP_RAWG_BASE_URL}games?ordering=-released&page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+  const urlUpcoming = `${process.env.REACT_APP_RAWG_BASE_URL}games?ordering=page=${currentPage}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+  const { selectedSort, sortClickHandler } = useSort(
+    urlRelevant,
+    urlPopular,
+    urlTopRated,
+    urlLatest,
+    urlUpcoming,
+    setLoadedGames
+  );
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -53,10 +75,6 @@ const Games = () => {
         const genresData = await sendRequest(urlGenres);
         const platformsData = await sendRequest(urlPlatforms);
         const storesData = await sendRequest(urlStores);
-
-        console.log(genresData);
-        console.log(platformsData);
-        console.log(storesData);
 
         setLoadedGenres(genresData.results);
         setLoadedPlatforms(platformsData.results);
@@ -105,43 +123,6 @@ const Games = () => {
     );
   });
 
-  const sortChangeHandler = (e) => {
-    setSelectedSort(e.target.value);
-  };
-
-  const genreChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedGenres([...selectedGenres, value]);
-    } else {
-      setSelectedGenres(selectedGenres.filter((e) => e !== value));
-    }
-  };
-
-  const platformChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedPlatforms([...selectedPlatforms, value]);
-    } else {
-      setSelectedPlatforms(selectedPlatforms.filter((e) => e !== value));
-    }
-  };
-
-  const storeChangeHandler = (e) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
-    console.log(value, checked);
-    if (checked) {
-      setSelectedStores([...selectedStores, value]);
-    } else {
-      setSelectedStores(selectedStores.filter((e) => e !== value));
-    }
-  };
-
   const submitFormHandler = useCallback(
     async (e) => {
       e.preventDefault();
@@ -185,7 +166,7 @@ const Games = () => {
         selectedDayRange &&
         selectedDayRange.from !== null &&
         selectedDayRange.to !== null
-          ? `date=${fromDate},${toDate}&`
+          ? `&date=${fromDate}.${toDate}&`
           : '';
 
       const stores =
@@ -219,7 +200,11 @@ const Games = () => {
     <section className={styles.games}>
       <Grid>
         <div className={styles.sort_search}>
-          <Sort gridStyle={styles.sort} />
+          <Sort
+            gridStyle={styles.sort}
+            onClickSelected={sortClickHandler}
+            selected={selectedSort}
+          />
           <Search
             onChange={changeHandler}
             initialVaue={inputText}
@@ -228,7 +213,6 @@ const Games = () => {
         </div>
         <Filter
           game
-          onSortChange={sortChangeHandler}
           onGenreChange={genreChangeHandler}
           genres={loadedGenres}
           onPlatformChange={platformChangeHandler}
@@ -247,10 +231,14 @@ const Games = () => {
             onClickPage={pageHandler}
             currentPage={currentPage}
             onClickPrev={prevHandler}
+            prevPage={currentPage - 1}
             onClickNext={nextHandler}
+            nextPage={currentPage + 1}
             maxPageNumberLimit={maxPageNumberLimit}
             minPageNumberLimit={minPageNumberLimit}
             gridStyle={styles.pagination}
+            onClickFirstPage={firstPageHandler}
+            onClickLastPage={lastPageHandler}
           />
         )}
       </Grid>

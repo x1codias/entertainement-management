@@ -16,6 +16,7 @@
     inset 0 0 1.5rem #fa0000, 0 0 0.5em #fa0000, inset 0 0 0.5em #fa0000,
     0 0 0.1em #fa0000, inset 0 0 0.1em #fa0000, 0 10px 3px #000,
     inset 0 10px 3px #000;
+  transition: all 0.5s;
 }
 
 .item-title {
@@ -24,4 +25,9 @@
   color: #d7e8f0;
   text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #00aaff, 0 0 0.5em #00aaff,
     0 0 0.1em #00aaff, 0 10px 3px #000;
+  transition: all 0.5s;
+}
+
+.icon {
+  transition: all 0.5s;
 }
