@@ -1,19 +1,15 @@
 const express = require('express');
 
 const movieController = require('../controllers/movie-controllers');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
-router.get('/favorites', movieController.getAllMovies);
+router.use(checkAuth);
 
-router.post(
-  '/favorite',
-  movieController.uploadMovieImage,
-  movieController.resizeMovieImage,
-  movieController.createMovie
-);
+router.put('/:id', movieController.updateMovie);
 
-router.patch('/:id/status', movieController.updateMovie);
+router.post('/', movieController.createMovie);
 
 router.delete('/:id', movieController.deleteMovie);
 

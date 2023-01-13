@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const factory = require('../controllers/handler-factory');
+const catchAsync = require('../utils/catch-async');
 
 const signup = async (req, res, next) => {
   /*const errors = validationResult(req);
@@ -15,13 +16,17 @@ const signup = async (req, res, next) => {
     return next(error);
   }*/
 
-  const { username, email, password, avatar } = req.body;
+  console.log(req.body);
+
+  const { username, email, password /*, avatar*/ } = req.body;
 
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
-    const error = new HttpError(`Error: ${err.message}`);
+    const error = new HttpError(
+      `Error: Signing up failed, please try again later`
+    );
     return next(error);
   }
 
@@ -37,7 +42,10 @@ const signup = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    const error = new HttpError(`Error ${err.message}`, 500);
+    const error = new HttpError(
+      `Error: Could not create user, please try again`,
+      500
+    );
     return next(error);
   }
 
@@ -45,7 +53,9 @@ const signup = async (req, res, next) => {
     username,
     email,
     password: hashedPassword,
-    imageUrl: avatar,
+    favorite_list: [],
+    status_list: [],
+    //imageUrl: avatar,
   });
 
   try {
@@ -67,9 +77,12 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(201)
-    .json({ userId: newUser.id, email: newUser.email, token: token });
+  res.status(201).json({
+    userId: newUser.id,
+    username: newUser.username,
+    email: newUser.email,
+    token: token,
+  });
 };
 
 const login = async (req, res, next) => {
@@ -84,7 +97,9 @@ const login = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email });
+    existingUser = await User.findOne({ email: email }).populate(
+      'favorite_list'
+    );
   } catch (err) {
     const error = new HttpError(`Error: ${err.message}`);
     return next(error);
@@ -126,11 +141,31 @@ const login = async (req, res, next) => {
   res.json({
     userId: existingUser.id,
     email: existingUser.email,
+    username: existingUser.username,
     token: token,
   });
 };
 
+const findUser = () =>
+  catchAsync(async (req, res, next) => {
+    let user;
+    try {
+      user = await user.findById(req.userData.userId);
+    } catch (err) {
+      return next(new HttpError('Creating doc failed, please try again', 500));
+    }
+
+    if (!user) {
+      return next(
+        new HttpError('Could not find user for the provided id', 404)
+      );
+    }
+
+    return user;
+  });
+
 exports.signup = signup;
 exports.login = login;
-exports.uploadUserImage = factory.upload;
-exports.resizeUserImage = factory.resizeImage('user');
+exports.findUser = findUser;
+//exports.uploadUserImage = factory.upload;
+//exports.resizeUserImage = factory.resizeImage('user');

@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
-const mongoSanitizer = require('mongo-sanitize');
-const xss = require('xss');
+const mongoSanitizer = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const hpp = require('hpp');
 const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 
 const HttpError = require('./models/http-error');
 const userRoutes = require('./routes/user-routes');
@@ -21,6 +22,10 @@ dotenv.config({ path: './config.env' });
 
 // Start express app
 const app = express();
+
+// Body parser, reading data from body into req.body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.enable('trust proxy');
 
@@ -41,9 +46,6 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-// Body parser, reading data from body into req.body
-app.use(bodyParser.json());
-
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitizer());
 
@@ -59,11 +61,12 @@ app.use(compression());
 app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
-app.use('/api/animes', animeRoutes);
+//app.use('/api/animes', animeRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/games', gameRoutes);
 
 app.use((req, res, next) => {
+  console.log(req.protocol, req.get('host'), req.originalUrl);
   const error = new HttpError('Could not find this route', 404);
   return next(error);
 });
