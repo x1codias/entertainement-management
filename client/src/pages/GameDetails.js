@@ -14,8 +14,6 @@ import {
   FaDesktop,
   FaNeos,
   FaGlobe,
-  FaRegEye,
-  FaRegEyeSlash,
 } from 'react-icons/fa';
 import { GrAppleAppStore } from 'react-icons/gr';
 import {
@@ -29,6 +27,7 @@ import {
 import { AiFillWindows } from 'react-icons/ai';
 import { BsBookmarkPlus, BsBookmarkDash } from 'react-icons/bs';
 import { TbHeart, TbHeartOff } from 'react-icons/tb';
+import { IoGameControllerOutline } from 'react-icons/io5';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import Card from '../components/Card';
@@ -134,7 +133,7 @@ const GameDetails = () => {
     console.log('Added to the favourites');
   };
 
-  const watchedChangeHandler = (e) => {
+  const playedChangeHandler = (e) => {
     console.log(`Marked as ${e.target.value}`);
   };
 
@@ -335,35 +334,31 @@ const GameDetails = () => {
                   {loadedGame.playtime} playable hours
                 </span>
                 <div className={styles['title__btn--group']}>
-                  <div
-                    className={styles['title__btn']}
-                    title="Add movie to watched list"
+                  <label
+                    htmlFor="eye"
+                    className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                    title="Add game to played list"
                   >
-                    <label
-                      htmlFor="eye"
-                      className={styles['title__btn--label']}
+                    <input
+                      id="eye"
+                      name="eye"
+                      type="checkbox"
+                      onChange={playedChangeHandler}
+                      value="watched"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
                     >
-                      <input
-                        id="eye"
-                        name="eye"
-                        type="checkbox"
-                        onChange={watchedChangeHandler}
-                        value="watched"
-                      />
-                      <IconContext.Provider
-                        value={{
-                          size: '2.5rem',
-                          className: `${styles['title__btn--icon']}`,
-                        }}
-                      >
-                        <FaRegEye />
-                      </IconContext.Provider>
-                    </label>
-                  </div>
+                      <IoGameControllerOutline />
+                    </IconContext.Provider>
+                  </label>
                   <button
                     onClick={addToFavoritesHandler}
                     className={styles['title__btn']}
-                    title="Add movie to favorites list"
+                    title="Add game to favorites list"
                   >
                     <IconContext.Provider
                       value={{
@@ -374,31 +369,27 @@ const GameDetails = () => {
                       <TbHeart />
                     </IconContext.Provider>
                   </button>
-                  <div
-                    className={styles['title__btn']}
-                    title="Add movie to watch list"
+                  <label
+                    htmlFor="bookmark"
+                    className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                    title="Add game to wish list"
                   >
-                    <label
-                      htmlFor="bookmark"
-                      className={styles['title__btn--label']}
+                    <input
+                      id="bookmark"
+                      name="bookmark"
+                      type="checkbox"
+                      onChange={playedChangeHandler}
+                      value="toWatch"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
                     >
-                      <input
-                        id="bookmark"
-                        name="bookmark"
-                        type="checkbox"
-                        onChange={watchedChangeHandler}
-                        value="toWatch"
-                      />
-                      <IconContext.Provider
-                        value={{
-                          size: '2.5rem',
-                          className: `${styles['title__btn--icon']}`,
-                        }}
-                      >
-                        <BsBookmarkPlus />
-                      </IconContext.Provider>
-                    </label>
-                  </div>
+                      <BsBookmarkPlus />
+                    </IconContext.Provider>
+                  </label>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo } from 'react-icons/si';
@@ -21,8 +21,10 @@ import Pagination from '../components/Pagination';
 
 import styles from './MovieDetails.module.css';
 import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
+import { AuthContext } from '../context/auth-context';
 
 const MovieDetails = () => {
+  const auth = useContext(AuthContext);
   const { id } = useParams();
   const [loadedMovie, setLoadedMovie] = useState({});
   const [loadedCast, setLoadedCast] = useState([]);
@@ -30,8 +32,9 @@ const MovieDetails = () => {
   const [loadedImages, setLoadedImages] = useState([]);
   const [loadedVideos, setLoadedVideos] = useState([]);
   const [loadedSimilar, setLoadedSimilar] = useState([]);
-  const [loadedWatchProviders, setLoadedWatchProviders] = useState();
-  const [loadedKeywords, setLoadedKeywords] = useState();
+  const [loadedWatchProviders, setLoadedWatchProviders] = useState([]);
+  const [loadedKeywords, setLoadedKeywords] = useState([]);
+  const [myFavorites, setMyFavorites] = useState([]);
   const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageVideo,
@@ -61,6 +64,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     const fetchMovie = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
       try {
         const urlMovieDetails = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlCastCrew = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
@@ -69,6 +73,7 @@ const MovieDetails = () => {
         const urlVideos = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlSimilar = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlKeywords = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/keywords?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+        const urlMyFavoriteMovies = `http://localhost:5000/api/users/${userData.username}/favorite`;
 
         const movieData = await sendRequest(urlMovieDetails);
         const castData = await sendRequest(urlCastCrew);
@@ -77,9 +82,19 @@ const MovieDetails = () => {
         const videoData = await sendRequest(urlVideos);
         const similarData = await sendRequest(urlSimilar);
         const keywordsData = await sendRequest(urlKeywords);
-        const data = await sendRequest(
-          'https://api.themoviedb.org/3/person/73457?api_key=5404dfaa6134c6da140f05453bfa52b3'
-        );
+        if (auth.isLoggedIn) {
+          const myFavoriteMoviesData = await sendRequest(
+            urlMyFavoriteMovies,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+
+          console.log(myFavoriteMoviesData);
+          setMyFavorites(myFavoriteMoviesData.favMovies);
+        }
 
         console.log(movieData);
         console.log(castData);
@@ -88,7 +103,6 @@ const MovieDetails = () => {
         console.log(videoData);
         console.log(similarData);
         console.log(keywordsData);
-        console.log(data);
 
         setLoadedMovie(movieData);
         setLoadedCast(castData.cast);
@@ -101,11 +115,39 @@ const MovieDetails = () => {
       } catch (err) {}
     };
     fetchMovie();
-  }, [sendRequest, id]);
+  }, [sendRequest, id, auth]);
 
-  const addToFavoritesHandler = (e) => {
+  const addToFavoritesHandler = async (e) => {
     e.preventDefault();
-    console.log('Added to the favourites');
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const newMovie = {
+      movieId: loadedMovie.id,
+      title: loadedMovie.original_title,
+      description: loadedMovie.overview,
+      image: loadedMovie.poster_path,
+    };
+
+    const movieToAdd = {
+      movieId: loadedMovie.id,
+    };
+
+    const urlCreateMovie = `http://localhost:5000/api/movies`;
+    const urlAddMovieToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite`;
+
+    await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + auth.token,
+    });
+
+    await sendRequest(
+      urlAddMovieToFavorite,
+      'POST',
+      JSON.stringify(movieToAdd),
+      {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + auth.token,
+      }
+    );
   };
 
   const watchedChangeHandler = (e) => {
@@ -306,28 +348,20 @@ const MovieDetails = () => {
                 </span>
               </p>
               <div className={styles['title__btn--group']}>
-                <div
+                <button
+                  onClick={watchedChangeHandler}
                   className={styles['title__btn']}
                   title="Add movie to watched list"
                 >
-                  <label htmlFor="eye" className={styles['title__btn--label']}>
-                    <input
-                      id="eye"
-                      name="eye"
-                      type="checkbox"
-                      onChange={watchedChangeHandler}
-                      value="watched"
-                    />
-                    <IconContext.Provider
-                      value={{
-                        size: '2.5rem',
-                        className: `${styles['title__btn--icon']}`,
-                      }}
-                    >
-                      <FaRegEye />
-                    </IconContext.Provider>
-                  </label>
-                </div>
+                  <IconContext.Provider
+                    value={{
+                      size: '2.5rem',
+                      className: `${styles['title__btn--icon']}`,
+                    }}
+                  >
+                    <FaRegEye />
+                  </IconContext.Provider>
+                </button>
                 <button
                   onClick={addToFavoritesHandler}
                   className={styles['title__btn']}
@@ -340,33 +374,23 @@ const MovieDetails = () => {
                     }}
                   >
                     <TbHeart />
+                    {myFavorites && myFavorites}
                   </IconContext.Provider>
                 </button>
-                <div
+                <button
+                  onClick={watchedChangeHandler}
                   className={styles['title__btn']}
                   title="Add movie to watch list"
                 >
-                  <label
-                    htmlFor="bookmark"
-                    className={styles['title__btn--label']}
+                  <IconContext.Provider
+                    value={{
+                      size: '2.5rem',
+                      className: `${styles['title__btn--icon']}`,
+                    }}
                   >
-                    <input
-                      id="bookmark"
-                      name="bookmark"
-                      type="checkbox"
-                      onChange={watchedChangeHandler}
-                      value="toWatch"
-                    />
-                    <IconContext.Provider
-                      value={{
-                        size: '2.5rem',
-                        className: `${styles['title__btn--icon']}`,
-                      }}
-                    >
-                      <BsBookmarkPlus />
-                    </IconContext.Provider>
-                  </label>
-                </div>
+                    <BsBookmarkPlus />
+                  </IconContext.Provider>
+                </button>
               </div>
             </div>
           </div>

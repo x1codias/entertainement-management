@@ -146,6 +146,75 @@ genres:
   text-align: justify;
 }
 
+.title__btn--group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.title__btn {
+  width: fit-content;
+  padding: 0.4rem 1.7rem 0.4rem 1.7rem;
+  background-color: #d3d3d3;
+  outline: none;
+  border: none;
+  border-radius: 2rem;
+  background: linear-gradient(to right bottom, #333 30%, #d3d3d3 30%);
+  background-size: 500% 300%;
+  background-position: right top;
+  box-shadow: none;
+  transition: background-position 0.8s ease-in-out, scale 0.5s, box-shadow 0.5s;
+}
+
+.title__btn--label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.title__btn--label input {
+  appearance: none;
+  cursor: pointer;
+}
+
+.title__btn--icon {
+  color: #444;
+  text-align: center;
+  transition: color 1s ease-in-out;
+}
+
+.title__btn--icon:nth-child(2) {
+  transition: fill 1s ease, filter 1s ease;
+}
+
+.title__btn:hover {
+  cursor: pointer;
+  background-position: left top;
+  scale: 1.05;
+  box-shadow: 0 0.5rem 0.5rem rgba(255, 255, 255, 0.1),
+    0 0 1rem rgba(170, 170, 170, 0.5), 0 0 1.5rem rgba(170, 170, 170, 1);
+}
+
+.title__btn:hover:first-child .title__btn--icon {
+  fill: #eb6440;
+  color: #eb6440;
+  filter: drop-shadow(0 0 0.5rem #eb6440);
+}
+
+.title__btn:hover:nth-child(2) .title__btn--icon {
+  fill: red;
+  color: red;
+  filter: drop-shadow(0 0 0.5rem #fa0000);
+}
+
+.title__btn:hover:last-child .title__btn--icon {
+  fill: yellow;
+  color: yellow;
+  filter: drop-shadow(0 0 0.5rem yellow);
+}
+
 .tags {
   display: inline-block;
   width: 100%;
@@ -173,6 +242,11 @@ genres:
 .details__description {
   line-height: 2.4rem;
   text-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 0 2rem 0 2rem;
 }
 
 .container {

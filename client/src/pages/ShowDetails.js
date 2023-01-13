@@ -303,9 +303,11 @@ const ShowDetails = () => {
 
   loadedSeason &&
     loadedSeason.episodes &&
-    loadedSeason.episodes.forEach((episode) =>
-      episodeScores.push(episode.vote_average)
-    );
+    loadedSeason.episodes.forEach((episode) => {
+      if (episode.vote_average > 0) {
+        return episodeScores.push(episode.vote_average);
+      }
+    });
 
   if (loadedSeason !== undefined) {
     episodes =
@@ -337,8 +339,11 @@ const ShowDetails = () => {
 
   const seasonScore = () => {
     const sum = episodeScores.reduce((prev, curr) => prev + curr, 0);
+    const episodesWithRating =
+      loadedSeason.episodes &&
+      loadedSeason.episodes.filter((episode) => episode.vote_average > 0);
     const average = Math.ceil(
-      (loadedSeason.episodes && sum / loadedSeason.episodes.length) * 10
+      (loadedSeason.episodes && sum / episodesWithRating.length) * 10
     );
     return average;
   };
@@ -395,28 +400,27 @@ const ShowDetails = () => {
                 &nbsp; episodes
               </p>
               <div className={styles['title__btn--group']}>
-                <div
-                  className={styles['title__btn']}
-                  title="Add movie to watched list"
+                <label
+                  htmlFor="eye"
+                  className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                  title="Add show to watched list"
                 >
-                  <label htmlFor="eye" className={styles['title__btn--label']}>
-                    <input
-                      id="eye"
-                      name="eye"
-                      type="checkbox"
-                      onChange={watchedChangeHandler}
-                      value="watched"
-                    />
-                    <IconContext.Provider
-                      value={{
-                        size: '2.5rem',
-                        className: `${styles['title__btn--icon']}`,
-                      }}
-                    >
-                      <FaRegEye />
-                    </IconContext.Provider>
-                  </label>
-                </div>
+                  <input
+                    id="eye"
+                    name="eye"
+                    type="checkbox"
+                    onChange={watchedChangeHandler}
+                    value="watched"
+                  />
+                  <IconContext.Provider
+                    value={{
+                      size: '2.5rem',
+                      className: `${styles['title__btn--icon']}`,
+                    }}
+                  >
+                    <FaRegEye />
+                  </IconContext.Provider>
+                </label>
                 <button
                   onClick={addToFavoritesHandler}
                   className={styles['title__btn']}
@@ -431,31 +435,27 @@ const ShowDetails = () => {
                     <TbHeart />
                   </IconContext.Provider>
                 </button>
-                <div
-                  className={styles['title__btn']}
-                  title="Add movie to watch list"
+                <label
+                  htmlFor="bookmark"
+                  className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                  title="Add show to watch list"
                 >
-                  <label
-                    htmlFor="bookmark"
-                    className={styles['title__btn--label']}
+                  <input
+                    id="bookmark"
+                    name="bookmark"
+                    type="checkbox"
+                    onChange={watchedChangeHandler}
+                    value="toWatch"
+                  />
+                  <IconContext.Provider
+                    value={{
+                      size: '2.5rem',
+                      className: `${styles['title__btn--icon']}`,
+                    }}
                   >
-                    <input
-                      id="bookmark"
-                      name="bookmark"
-                      type="checkbox"
-                      onChange={watchedChangeHandler}
-                      value="toWatch"
-                    />
-                    <IconContext.Provider
-                      value={{
-                        size: '2.5rem',
-                        className: `${styles['title__btn--icon']}`,
-                      }}
-                    >
-                      <BsBookmarkPlus />
-                    </IconContext.Provider>
-                  </label>
-                </div>
+                    <BsBookmarkPlus />
+                  </IconContext.Provider>
+                </label>
               </div>
             </div>
           </div>
@@ -524,12 +524,10 @@ const ShowDetails = () => {
                   </span>
                 </div>
                 {loadedSeason.overview && (
-                  <Fragment>
+                  <div className={styles.details__description}>
                     <h2>Overview</h2>
-                    <p className={styles.details__description}>
-                      {loadedSeason.overview}
-                    </p>
-                  </Fragment>
+                    <p>{loadedSeason.overview}</p>
+                  </div>
                 )}
                 <div className={styles['container-content']}>
                   <Pagination

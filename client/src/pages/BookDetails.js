@@ -35,7 +35,7 @@ const BookDetails = () => {
     console.log('Added to the favourites');
   };
 
-  const watchedChangeHandler = (e) => {
+  const readChangeHandler = (e) => {
     console.log(`Marked as ${e.target.value}`);
   };
 
@@ -136,35 +136,31 @@ const BookDetails = () => {
                   pages
                 </p>
                 <div className={styles['title__btn--group']}>
-                  <div
-                    className={styles['title__btn']}
-                    title="Add movie to watched list"
+                  <label
+                    htmlFor="eye"
+                    className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                    title="Add book to read list"
                   >
-                    <label
-                      htmlFor="eye"
-                      className={styles['title__btn--label']}
+                    <input
+                      id="eye"
+                      name="eye"
+                      type="checkbox"
+                      onChange={readChangeHandler}
+                      value="read"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
                     >
-                      <input
-                        id="eye"
-                        name="eye"
-                        type="checkbox"
-                        onChange={watchedChangeHandler}
-                        value="watched"
-                      />
-                      <IconContext.Provider
-                        value={{
-                          size: '2.5rem',
-                          className: `${styles['title__btn--icon']}`,
-                        }}
-                      >
-                        <FaRegEye />
-                      </IconContext.Provider>
-                    </label>
-                  </div>
+                      <FaRegEye />
+                    </IconContext.Provider>
+                  </label>
                   <button
                     onClick={addToFavoritesHandler}
                     className={styles['title__btn']}
-                    title="Add movie to favorites list"
+                    title="Add book to favorites list"
                   >
                     <IconContext.Provider
                       value={{
@@ -175,31 +171,27 @@ const BookDetails = () => {
                       <TbHeart />
                     </IconContext.Provider>
                   </button>
-                  <div
-                    className={styles['title__btn']}
-                    title="Add movie to watch list"
+                  <label
+                    htmlFor="bookmark"
+                    className={`${styles['title__btn']} ${styles['title__btn--label']}`}
+                    title="Add book to wish list"
                   >
-                    <label
-                      htmlFor="bookmark"
-                      className={styles['title__btn--label']}
+                    <input
+                      id="bookmark"
+                      name="bookmark"
+                      type="checkbox"
+                      onChange={readChangeHandler}
+                      value="toRead"
+                    />
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
                     >
-                      <input
-                        id="bookmark"
-                        name="bookmark"
-                        type="checkbox"
-                        onChange={watchedChangeHandler}
-                        value="toWatch"
-                      />
-                      <IconContext.Provider
-                        value={{
-                          size: '2.5rem',
-                          className: `${styles['title__btn--icon']}`,
-                        }}
-                      >
-                        <BsBookmarkPlus />
-                      </IconContext.Provider>
-                    </label>
-                  </div>
+                      <BsBookmarkPlus />
+                    </IconContext.Provider>
+                  </label>
                 </div>
               </div>
             </div>
