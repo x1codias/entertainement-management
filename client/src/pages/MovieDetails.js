@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo } from 'react-icons/si';
@@ -34,7 +34,7 @@ const MovieDetails = () => {
   const [loadedSimilar, setLoadedSimilar] = useState([]);
   const [loadedWatchProviders, setLoadedWatchProviders] = useState([]);
   const [loadedKeywords, setLoadedKeywords] = useState([]);
-  const [myFavorites, setMyFavorites] = useState([]);
+  const [myFavorites, setMyFavorites] = useState();
   const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageVideo,
@@ -92,8 +92,9 @@ const MovieDetails = () => {
             }
           );
 
-          console.log(myFavoriteMoviesData);
-          setMyFavorites(myFavoriteMoviesData.favMovies);
+          console.log(myFavoriteMoviesData.favMovies);
+          myFavoriteMoviesData &&
+            setMyFavorites(myFavoriteMoviesData.favMovies);
         }
 
         console.log(movieData);
@@ -117,38 +118,56 @@ const MovieDetails = () => {
     fetchMovie();
   }, [sendRequest, id, auth]);
 
-  const addToFavoritesHandler = async (e) => {
-    e.preventDefault();
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const newMovie = {
-      movieId: loadedMovie.id,
-      title: loadedMovie.original_title,
-      description: loadedMovie.overview,
-      image: loadedMovie.poster_path,
-    };
+  const addToFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newMovie = {
+        movieId: loadedMovie.id,
+        title: loadedMovie.original_title,
+        description: loadedMovie.overview,
+        image: loadedMovie.poster_path,
+      };
 
-    const movieToAdd = {
-      movieId: loadedMovie.id,
-    };
+      const movieToAdd = {
+        movieId: loadedMovie.id,
+      };
 
-    const urlCreateMovie = `http://localhost:5000/api/movies`;
-    const urlAddMovieToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite`;
+      const urlCreateMovie = `http://localhost:5000/api/movies`;
+      const urlAddMovieToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite`;
 
-    await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + auth.token,
-    });
-
-    await sendRequest(
-      urlAddMovieToFavorite,
-      'POST',
-      JSON.stringify(movieToAdd),
-      {
+      await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + auth.token,
-      }
-    );
-  };
+      });
+
+      await sendRequest(
+        urlAddMovieToFavorite,
+        'POST',
+        JSON.stringify(movieToAdd),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedMovie, auth, sendRequest]
+  );
+
+  const removeFromFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/${loadedMovie.id}`;
+
+      await sendRequest(urlRemoveFromFavorite, 'PATCH', null, {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + auth.token,
+      });
+    },
+    [loadedMovie, auth, sendRequest]
+  );
 
   const watchedChangeHandler = (e) => {
     console.log(`Marked as ${e.target.value}`);
@@ -322,6 +341,10 @@ const MovieDetails = () => {
   const runtimeHours = Math.floor(loadedMovie.runtime / 60);
   const runtimeMinutes = loadedMovie.runtime % 60;
 
+  const movieInFavList =
+    myFavorites &&
+    myFavorites.some((favMovie) => favMovie.movieId === loadedMovie.id);
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -363,7 +386,11 @@ const MovieDetails = () => {
                   </IconContext.Provider>
                 </button>
                 <button
-                  onClick={addToFavoritesHandler}
+                  onClick={
+                    !movieInFavList
+                      ? addToFavoritesHandler
+                      : removeFromFavoritesHandler
+                  }
                   className={styles['title__btn']}
                   title="Add movie to favorites list"
                 >
@@ -373,8 +400,7 @@ const MovieDetails = () => {
                       className: `${styles['title__btn--icon']}`,
                     }}
                   >
-                    <TbHeart />
-                    {myFavorites && myFavorites}
+                    {!movieInFavList ? <TbHeart /> : <TbHeartOff />}
                   </IconContext.Provider>
                 </button>
                 <button
