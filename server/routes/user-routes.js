@@ -27,6 +27,6 @@ router.get('/:id/favorite', movieController.getAllFavMovies);
 
 router.post('/:id/favorite', movieController.addMovieToFavorites);
 
-router.delete('/:id/favorite/:id', movieController.removeMovieFromFavorites);
+router.patch('/:id/favorite/:mid', movieController.removeMovieFromFavorites);
 
 module.exports = router;

@@ -174,14 +174,15 @@ const addToFavorites = () =>
 
 const removeFromFavorite = () =>
   catchAsync(async (req, res, next) => {
-    const movieId = req.params.id;
+    const movieId = req.params.mid;
 
     let movie;
-    let loggedUser;
+    let favList;
     try {
-      movie = await Favorite.findOne({ movieId: movieId }).populate('users');
-      loggedUser = await User.find(req.userData.userId);
+      movie = await Movie.findOne({ movieId: movieId });
+      favList = await Favorite.findOne({ user: req.userData.userId });
     } catch (err) {
+      console.log(err);
       return next(
         new HttpError(`Something went wrong, could not find movie`, 500)
       );
@@ -192,15 +193,24 @@ const removeFromFavorite = () =>
       return next(error);
     }
 
-    //const imagePath = movie.image;
+    if (!favList) {
+      const error = new HttpError(
+        `Could not find favorite list for user with this id.`,
+        404
+      );
+      return next(error);
+    }
 
+    //const imagePath = movie.image;
+    console.log(favList, movie);
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
-      await movie.remove({ session: sess });
-      loggedUser.favorite_list.pull(movie);
+      favList.entertainment.pull(movie);
+      favList.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
+      console.log(err.message);
       return next(
         new HttpError(`Deleting movie failed, please try again`, 500)
       );
