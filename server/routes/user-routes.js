@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 
 const userControllers = require('../controllers/user-controllers');
 const movieController = require('../controllers/movie-controllers');
+const showController = require('../controllers/show-controllers');
 const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
@@ -25,13 +26,22 @@ router.use(checkAuth);
 
 router.get('/:id/favorite', movieController.getAllFavMovies);
 
+router.get('/:id/favorite/shows', showController.getAllFavoriteShows);
+
 router.get('/:id/status', movieController.getAllStatusMovies);
 
 router.post('/:id/favorite', movieController.addMovieToFavorites);
 
+router.post('/:id/favorite/shows', showController.addShowToFavorites);
+
 router.post('/:id/status', movieController.addMovieToStatus);
 
 router.patch('/:id/favorite/:mid', movieController.removeMovieFromFavorites);
+
+router.patch(
+  '/:id/favorite/shows/:sid',
+  movieController.removeMovieFromFavorites
+);
 
 router.patch('/:id/status/:mid', movieController.updateMovieStatus);
 
