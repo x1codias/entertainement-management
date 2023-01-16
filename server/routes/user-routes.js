@@ -25,8 +25,14 @@ router.use(checkAuth);
 
 router.get('/:id/favorite', movieController.getAllFavMovies);
 
+router.get('/:id/status', movieController.getAllStatusMovies);
+
 router.post('/:id/favorite', movieController.addMovieToFavorites);
 
+router.post('/:id/status', movieController.addMovieToStatus);
+
 router.patch('/:id/favorite/:mid', movieController.removeMovieFromFavorites);
+
+router.patch('/:id/status/:mid', movieController.updateMovieStatus);
 
 module.exports = router;
