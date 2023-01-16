@@ -201,9 +201,9 @@ genres:
 }
 
 .title__btn:hover:last-child .title__btn--icon {
-  fill: yellow;
-  color: yellow;
-  filter: drop-shadow(0 0 0.5rem yellow);
+  fill: #9e7676;
+  color: #9e7676;
+  filter: drop-shadow(0 0 0.5rem #9e7676);
 }
 
 .platforms {

@@ -34,7 +34,10 @@ const MovieDetails = () => {
   const [loadedSimilar, setLoadedSimilar] = useState([]);
   const [loadedWatchProviders, setLoadedWatchProviders] = useState([]);
   const [loadedKeywords, setLoadedKeywords] = useState([]);
-  const [myFavorites, setMyFavorites] = useState();
+  const [myFavorites, setMyFavorites] = useState([]);
+  const [watchedMovies, setWatchedMovies] = useState([]);
+  const [toWatchMovies, setToWatchMovies] = useState([]);
+  const [backendMovies, setBackendMovies] = useState([]);
   const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageVideo,
@@ -73,7 +76,9 @@ const MovieDetails = () => {
         const urlVideos = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlSimilar = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlKeywords = `${process.env.REACT_APP_TMDB_BASE_URL}3/movie/${id}/keywords?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+        const urlBackendMovies = `http://localhost:5000/api/movies/`;
         const urlMyFavoriteMovies = `http://localhost:5000/api/users/${userData.username}/favorite`;
+        const urlStatusMovies = `http://localhost:5000/api/users/${userData.username}/status`;
 
         const movieData = await sendRequest(urlMovieDetails);
         const castData = await sendRequest(urlCastCrew);
@@ -82,6 +87,7 @@ const MovieDetails = () => {
         const videoData = await sendRequest(urlVideos);
         const similarData = await sendRequest(urlSimilar);
         const keywordsData = await sendRequest(urlKeywords);
+        const backendMoviesData = await sendRequest(urlBackendMovies);
         if (auth.isLoggedIn) {
           const myFavoriteMoviesData = await sendRequest(
             urlMyFavoriteMovies,
@@ -91,10 +97,23 @@ const MovieDetails = () => {
               Authorization: 'Bearer ' + auth.token,
             }
           );
+          const statusMoviesData = await sendRequest(
+            urlStatusMovies,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
 
           console.log(myFavoriteMoviesData.favMovies);
+          console.log(statusMoviesData);
           myFavoriteMoviesData &&
             setMyFavorites(myFavoriteMoviesData.favMovies);
+          statusMoviesData != null &&
+            setWatchedMovies(statusMoviesData.watchedMovies);
+          statusMoviesData != null &&
+            setToWatchMovies(statusMoviesData.toWatchMovies);
         }
 
         console.log(movieData);
@@ -104,6 +123,7 @@ const MovieDetails = () => {
         console.log(videoData);
         console.log(similarData);
         console.log(keywordsData);
+        console.log(backendMoviesData);
 
         setLoadedMovie(movieData);
         setLoadedCast(castData.cast);
@@ -113,6 +133,7 @@ const MovieDetails = () => {
         setLoadedVideos(videoData.results);
         setLoadedSimilar(similarData.results);
         setLoadedKeywords(keywordsData.keywords);
+        setBackendMovies(backendMoviesData.movies);
       } catch (err) {}
     };
     fetchMovie();
@@ -136,10 +157,15 @@ const MovieDetails = () => {
       const urlCreateMovie = `http://localhost:5000/api/movies`;
       const urlAddMovieToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite`;
 
-      await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + auth.token,
-      });
+      if (
+        backendMovies &&
+        backendMovies.some((movie) => loadedMovie.id === movie.movieId)
+      ) {
+        await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
 
       await sendRequest(
         urlAddMovieToFavorite,
@@ -151,7 +177,7 @@ const MovieDetails = () => {
         }
       );
     },
-    [loadedMovie, auth, sendRequest]
+    [loadedMovie, backendMovies, auth, sendRequest]
   );
 
   const removeFromFavoritesHandler = useCallback(
@@ -169,9 +195,118 @@ const MovieDetails = () => {
     [loadedMovie, auth, sendRequest]
   );
 
-  const watchedChangeHandler = (e) => {
-    console.log(`Marked as ${e.target.value}`);
-  };
+  const addToWatchedListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newMovie = {
+        movieId: loadedMovie.id,
+        title: loadedMovie.original_title,
+        description: loadedMovie.overview,
+        image: loadedMovie.poster_path,
+      };
+
+      const urlCreateMovie = `http://localhost:5000/api/movies`;
+      const urlAddMovieToWatched = `http://localhost:5000/api/users/${userData.userId}/status`;
+
+      if (
+        backendMovies &&
+        backendMovies.some((movie) => loadedMovie.id === movie.movieId)
+      ) {
+        await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+      await sendRequest(
+        urlAddMovieToWatched,
+        'POST',
+        JSON.stringify({ movieId: newMovie.movieId, statusValue: 'done' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedMovie, backendMovies, auth, sendRequest]
+  );
+
+  const removeFromWatchedListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/status/${loadedMovie.id}`;
+
+      await sendRequest(
+        urlRemoveFromWatchedList,
+        'PATCH',
+        JSON.stringify({ statusValue: 'done' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedMovie, auth, sendRequest]
+  );
+
+  const addToWatchListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newMovie = {
+        movieId: loadedMovie.id,
+        title: loadedMovie.original_title,
+        description: loadedMovie.overview,
+        image: loadedMovie.poster_path,
+      };
+
+      const urlCreateMovie = `http://localhost:5000/api/movies`;
+      const urlAddMovieToWatchList = `http://localhost:5000/api/users/${userData.userId}/status`;
+
+      if (
+        backendMovies &&
+        backendMovies.some((movie) => loadedMovie.id === movie.movieId)
+      ) {
+        await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+
+      await sendRequest(
+        urlAddMovieToWatchList,
+        'POST',
+        JSON.stringify({ movieId: newMovie.movieId, statusValue: 'to_do' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedMovie, auth, backendMovies, sendRequest]
+  );
+
+  const removeFromWatchListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromWatchList = `http://localhost:5000/api/users/${userData.userId}/status/${loadedMovie.id}`;
+
+      await sendRequest(
+        urlRemoveFromWatchList,
+        'PATCH',
+        JSON.stringify({ statusValue: 'to_do' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedMovie, auth, sendRequest]
+  );
 
   const platforms =
     loadedWatchProviders &&
@@ -345,6 +480,14 @@ const MovieDetails = () => {
     myFavorites &&
     myFavorites.some((favMovie) => favMovie.movieId === loadedMovie.id);
 
+  const movieInWatchedList =
+    watchedMovies &&
+    watchedMovies.some((watched) => watched.movieId === loadedMovie.id);
+
+  const movieInWatchList =
+    toWatchMovies &&
+    toWatchMovies.some((toWatch) => toWatch.movieId === loadedMovie.id);
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -370,54 +513,68 @@ const MovieDetails = () => {
                   {runtimeMinutes !== 0 && <strong>{runtimeMinutes}m</strong>}
                 </span>
               </p>
-              <div className={styles['title__btn--group']}>
-                <button
-                  onClick={watchedChangeHandler}
-                  className={styles['title__btn']}
-                  title="Add movie to watched list"
-                >
-                  <IconContext.Provider
-                    value={{
-                      size: '2.5rem',
-                      className: `${styles['title__btn--icon']}`,
-                    }}
+              {auth.isLoggedIn && (
+                <div className={styles['title__btn--group']}>
+                  <button
+                    onClick={
+                      !movieInWatchedList
+                        ? addToWatchedListHandler
+                        : removeFromWatchedListHandler
+                    }
+                    className={styles['title__btn']}
+                    title="Add movie to watched list"
                   >
-                    <FaRegEye />
-                  </IconContext.Provider>
-                </button>
-                <button
-                  onClick={
-                    !movieInFavList
-                      ? addToFavoritesHandler
-                      : removeFromFavoritesHandler
-                  }
-                  className={styles['title__btn']}
-                  title="Add movie to favorites list"
-                >
-                  <IconContext.Provider
-                    value={{
-                      size: '2.5rem',
-                      className: `${styles['title__btn--icon']}`,
-                    }}
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      {!movieInWatchedList ? <FaRegEye /> : <FaRegEyeSlash />}
+                    </IconContext.Provider>
+                  </button>
+                  <button
+                    onClick={
+                      !movieInFavList
+                        ? addToFavoritesHandler
+                        : removeFromFavoritesHandler
+                    }
+                    className={styles['title__btn']}
+                    title="Add movie to favorites list"
                   >
-                    {!movieInFavList ? <TbHeart /> : <TbHeartOff />}
-                  </IconContext.Provider>
-                </button>
-                <button
-                  onClick={watchedChangeHandler}
-                  className={styles['title__btn']}
-                  title="Add movie to watch list"
-                >
-                  <IconContext.Provider
-                    value={{
-                      size: '2.5rem',
-                      className: `${styles['title__btn--icon']}`,
-                    }}
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      {!movieInFavList ? <TbHeart /> : <TbHeartOff />}
+                    </IconContext.Provider>
+                  </button>
+                  <button
+                    onClick={
+                      !movieInWatchList
+                        ? addToWatchListHandler
+                        : removeFromWatchListHandler
+                    }
+                    className={styles['title__btn']}
+                    title="Add movie to watch list"
                   >
-                    <BsBookmarkPlus />
-                  </IconContext.Provider>
-                </button>
-              </div>
+                    <IconContext.Provider
+                      value={{
+                        size: '2.5rem',
+                        className: `${styles['title__btn--icon']}`,
+                      }}
+                    >
+                      {!movieInWatchList ? (
+                        <BsBookmarkPlus />
+                      ) : (
+                        <BsBookmarkDash />
+                      )}
+                    </IconContext.Provider>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.tags}>{tags}</div>
