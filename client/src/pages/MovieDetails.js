@@ -159,7 +159,7 @@ const MovieDetails = () => {
 
       if (
         backendMovies &&
-        backendMovies.some((movie) => loadedMovie.id === movie.movieId)
+        !backendMovies.some((movie) => loadedMovie.id === movie.movieId)
       ) {
         await sendRequest(urlCreateMovie, 'POST', JSON.stringify(newMovie), {
           'Content-Type': 'application/json',

@@ -1,4 +1,11 @@
-import { Fragment, useState, useEffect, useRef } from 'react';
+import {
+  Fragment,
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useCallback,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo, SiPrime } from 'react-icons/si';
@@ -22,8 +29,10 @@ import { usePagination } from '../hooks/pagination-hook';
 
 import styles from './ShowDetails.module.css';
 import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
+import { AuthContext } from '../context/auth-context';
 
 const ShowDetails = () => {
+  const auth = useContext(AuthContext);
   const { id } = useParams();
   const [loadedShow, setLoadedShow] = useState({});
   const [loadedCast, setLoadedCast] = useState([]);
@@ -34,9 +43,12 @@ const ShowDetails = () => {
   const [loadedWatchProviders, setLoadedWatchProviders] = useState([]);
   const [loadedKeywords, setLoadedKeywords] = useState([]);
   const [season, setSeason] = useState(1);
-  const [selected, setSelected] = useState(1);
   const [loadedSeason, setLoadedSeason] = useState([]);
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [myFavorites, setMyFavorites] = useState([]);
+  const [watchedShows, setWatchedShows] = useState([]);
+  const [toWatchShows, setToWatchShows] = useState([]);
+  const [backendShows, setBackendShows] = useState([]);
+  const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageCast,
     prevHandler: prevHandlerCast,
@@ -70,6 +82,7 @@ const ShowDetails = () => {
 
   useEffect(() => {
     const fetchShow = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
       try {
         const urlShowDetails = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlCastCrew = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
@@ -79,6 +92,9 @@ const ShowDetails = () => {
         const urlSimilar = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlEpisodes = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}/season/${season}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlKeywords = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}/keywords?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
+        const urlBackendShows = `http://localhost:5000/api/shows/`;
+        const urlMyFavoriteShows = `http://localhost:5000/api/users/${userData.username}/favorite/shows`;
+        //const urlStatusShows = `http://localhost:5000/api/users/${userData.username}/status/shows`;
 
         const showData = await sendRequest(urlShowDetails);
         const castCrewData = await sendRequest(urlCastCrew);
@@ -88,6 +104,33 @@ const ShowDetails = () => {
         const similarData = await sendRequest(urlSimilar);
         const episodeData = await sendRequest(urlEpisodes);
         const keywordsData = await sendRequest(urlKeywords);
+        const backendShowsData = await sendRequest(urlBackendShows);
+        if (auth.isLoggedIn) {
+          const myFavoriteShowsData = await sendRequest(
+            urlMyFavoriteShows,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+          /*const statusShowsData = await sendRequest(
+            urlStatusShows,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );*/
+
+          console.log(myFavoriteShowsData);
+          //console.log(statusShowsData);
+          myFavoriteShowsData && setMyFavorites(myFavoriteShowsData.favData);
+          /*statusShowsData != null &&
+            setWatchedShows(statusShowsData.watchedShows);
+          statusShowsData != null &&
+            setToWatchShows(statusShowsData.toWatchShows);*/
+        }
 
         console.log(showData);
         console.log(castCrewData);
@@ -97,6 +140,7 @@ const ShowDetails = () => {
         console.log(similarData);
         console.log(episodeData);
         console.log(keywordsData);
+        console.log(backendShowsData);
 
         setLoadedShow(showData);
         setLoadedCast(castCrewData.cast);
@@ -107,15 +151,70 @@ const ShowDetails = () => {
         setLoadedSeason(episodeData);
         setLoadedSimilar(similarData.results);
         setLoadedKeywords(keywordsData.results);
+        setBackendShows(backendShowsData.docs);
       } catch (err) {}
     };
     fetchShow();
-  }, [sendRequest, id, season]);
+  }, [sendRequest, id, season, auth]);
 
-  const addToFavoritesHandler = (e) => {
-    e.preventDefault();
-    console.log('Added to the favourites');
-  };
+  const addToFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newShow = {
+        showId: loadedShow.id,
+        title: loadedShow.original_name,
+        description: loadedShow.overview,
+        image: loadedShow.poster_path,
+      };
+
+      const urlCreateShow = `http://localhost:5000/api/shows`;
+      const urlAddShowToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/shows`;
+
+      if (
+        backendShows &&
+        !backendShows.some((show) => loadedShow.id === show.showId)
+      ) {
+        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+
+      await sendRequest(
+        urlAddShowToFavorite,
+        'POST',
+        JSON.stringify({ id: newShow.showId }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, backendShows, auth, sendRequest]
+  );
+
+  const removeFromFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/shows/${loadedShow.id}`;
+
+      const responseData = await sendRequest(
+        urlRemoveFromFavorite,
+        'PATCH',
+        {},
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+
+      console.log(responseData);
+    },
+    [loadedShow, auth, sendRequest]
+  );
 
   const watchedChangeHandler = (e) => {
     console.log(`Marked as ${e.target.value}`);
@@ -295,7 +394,6 @@ const ShowDetails = () => {
   const onChangeSeasonHandler = (e) => {
     e.preventDefault();
     setSeason(e.target.value);
-    setSelected(e.target.value);
   };
 
   let episodes;
@@ -370,6 +468,10 @@ const ShowDetails = () => {
       );
     });
 
+  const showInFavList =
+    myFavorites &&
+    myFavorites.some((favShow) => favShow.showId === loadedShow.id);
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -422,7 +524,11 @@ const ShowDetails = () => {
                   </IconContext.Provider>
                 </label>
                 <button
-                  onClick={addToFavoritesHandler}
+                  onClick={
+                    !showInFavList
+                      ? addToFavoritesHandler
+                      : removeFromFavoritesHandler
+                  }
                   className={styles['title__btn']}
                   title="Add movie to favorites list"
                 >
@@ -432,7 +538,7 @@ const ShowDetails = () => {
                       className: `${styles['title__btn--icon']}`,
                     }}
                   >
-                    <TbHeart />
+                    {!showInFavList ? <TbHeart /> : <TbHeartOff />}
                   </IconContext.Provider>
                 </button>
                 <label
