@@ -9,6 +9,8 @@ router.get('/', showController.getAllShows);
 
 router.use(checkAuth);
 
+router.post('/', showController.createShow);
+
 router.patch('/:id/update', showController.updateShow);
 
 router.delete('/:id', showController.deleteShow);

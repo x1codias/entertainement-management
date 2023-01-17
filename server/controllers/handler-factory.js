@@ -105,41 +105,25 @@ const updateOne = (Model, docName, user, userDoc) =>
     });
   });
 
-const createOne = (
-  Model,
-  user,
-  userDoc,
-  id,
-  title,
-  description,
-  image_url,
-  favorite
-) =>
-  catchAsync(async (next) => {
-    const createdDoc = new Model({
-      id,
-      title,
-      description,
-      image_url,
-      favorite,
-    });
+const createOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    console.log(req.body, req.userData);
 
-    createdDoc.users.push(user);
+    const createdDoc = new Model(req.body);
 
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
       await createdDoc.save({ session: sess });
-      userDoc.push(createdDoc);
-      await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
+      console.log(err);
       return next(
-        new HttpError('Creating doc failed, please try again later', 500)
+        new HttpError('Creating Document failed, please try again later', 500)
       );
     }
 
-    return createdDoc;
+    res.status(201).json({ doc: createdDoc });
   });
 
 const getOne = (Model, popOptions = '', docName) =>
@@ -196,21 +180,29 @@ const getAllDocsByUserId = (Model) =>
     });
   });
 
+const getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    let query = Model.find();
+    const docs = await query;
+
+    if (!docs) {
+      const error = new HttpError(`Could not find documents.`, 404);
+      return next(error);
+    }
+
+    res.status(200).json({ status: 'success', docs });
+  });
+
 const addToFavorites = (Model, idType, entertainment_type) =>
   catchAsync(async (req, res, next) => {
     const { id } = req.body;
-    const query = {};
-
-    if (idType !== '') {
-      query[idType] = id;
-    }
 
     let user;
     let doc;
     let favorite;
     try {
       user = await User.findById(req.userData.userId);
-      doc = await Model.findOne({ query });
+      doc = await Model.findOne({ [idType]: id });
       favorite = await Favorite.findOne({
         entertainment_type,
         user: user._id,
@@ -223,6 +215,8 @@ const addToFavorites = (Model, idType, entertainment_type) =>
         )
       );
     }
+
+    console.log(doc);
 
     if (!user) {
       return next(new HttpError('Could not find user', 404));
@@ -264,29 +258,31 @@ const addToFavorites = (Model, idType, entertainment_type) =>
       );
     }
 
-    res.status(201).json({ data: addedMovie });
+    res.status(201).json({ data: addedDoc });
   });
 
-const removeFromFavorites = (Model, idType) =>
+const removeFromFavorites = (Model, idType, entertainment_type) =>
   catchAsync(async (req, res, next) => {
-    const { id } = req.body;
-    const query = {};
+    const id = req.params.id;
 
-    if (idType !== '') {
-      query[idType] = id;
-    }
+    console.log(req.params.id);
 
     let doc;
     let favorite;
     try {
-      doc = await Model.findOne({ query });
-      favorite = await Favorite.findOne({ user: req.userData.userId });
+      doc = await Model.findOne({ [idType]: id });
+      favorite = await Favorite.findOne({
+        user: req.userData.userId,
+        entertainment_type,
+      });
     } catch (err) {
       console.log(err);
       return next(
         new HttpError(`Something went wrong, could not find document`, 500)
       );
     }
+
+    console.log(doc, favorite);
 
     if (!doc) {
       const error = new HttpError(`Could not find document with this id.`, 404);
@@ -301,8 +297,6 @@ const removeFromFavorites = (Model, idType) =>
       return next(error);
     }
 
-    //const imagePath = movie.image;
-    console.log(doc, favorite);
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
@@ -320,12 +314,11 @@ const removeFromFavorites = (Model, idType) =>
 
     res.status(204).json({
       status: 'success',
-      data: null,
-      message: `Successfully removed from favorite list document with id ${movie._id}`,
+      message: `Successfully removed from favorite list document with id ${doc._id}`,
     });
   });
 
-const getAllFavorites = (entertainement_type) =>
+const getAllFavorites = (entertainment_type) =>
   catchAsync(async (req, res, next) => {
     const userId = req.userData.userId;
 
@@ -342,9 +335,7 @@ const getAllFavorites = (entertainement_type) =>
     }
 
     if (!userWithDocs || userWithDocs.length === 0) {
-      return next(
-        new HttpError('Could not find a document for the provided user id', 404)
-      );
+      return res.status(200).json({ userWithDocs });
     }
 
     console.log(userWithDocs);
@@ -545,9 +536,10 @@ const getAllStatusDocs = (entertainment_type) =>
 
 exports.delete = deleteOne;
 exports.update = updateOne;
-exports.create = createOne;
+exports.createOne = createOne;
 exports.getOne = getOne;
-exports.getAll = getAllDocsByUserId;
+exports.getAll = getAll;
+exports.getAllByUser = getAllDocsByUserId;
 exports.addDocToFavorites = addToFavorites;
 exports.removeDocFromFavorites = removeFromFavorites;
 exports.getAllFavoriteDocs = getAllFavorites;

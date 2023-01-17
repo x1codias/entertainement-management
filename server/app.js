@@ -24,8 +24,7 @@ dotenv.config({ path: './config.env' });
 const app = express();
 
 // Body parser, reading data from body into req.body
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.enable('trust proxy');
 

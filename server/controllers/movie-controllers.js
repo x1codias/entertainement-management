@@ -16,100 +16,6 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const e = require('express');
 
-const deleteOne = () =>
-  catchAsync(async (req, res, next) => {
-    const movieId = req.params.id;
-
-    let movie;
-    try {
-      movie = await Movie.findById(movieId).populate('users');
-    } catch (err) {
-      return next(
-        new HttpError(`Something went wrong, could not find movie`, 500)
-      );
-    }
-
-    if (!movie) {
-      const error = new HttpError(`Could not find movie with this id.`, 404);
-      return next(error);
-    }
-
-    const imagePath = movie.image;
-
-    try {
-      const sess = await mongoose.startSession();
-      sess.startTransaction();
-      await movie.remove({ session: sess });
-      const loggedUser = await User.find(req.userData.userId);
-      loggedUser.movies.pull(movie);
-      await movie.users.save({ session: sess });
-      await sess.commitTransaction();
-    } catch (err) {
-      return next(
-        new HttpError(`Deleting movie failed, please try again`, 500)
-      );
-    }
-
-    fs.unlink(imagePath, (err) => console.log(err));
-
-    res.status(204).json({
-      status: 'success',
-      data: null,
-      message: `Successfully deleted movie with id ${movie._id}`,
-    });
-  });
-
-const updateOne = () =>
-  catchAsync(async (req, res, next) => {
-    const { id, title, description, image, favorite } = req.body;
-    const movieId = req.params.id;
-
-    let loggedUser;
-    let updatedMovie;
-    try {
-      updatedMovie = await Movie.findById(movieId);
-      loggedUser = await User.findById(req.userData.userId);
-    } catch (err) {
-      /*const createdMovie = createOne(
-        loggedUser,
-        id,
-        title,
-        description,
-        image,
-        favorite,
-        status
-      );
-
-      res.status(201).json({
-        status: 'success',
-        data: {
-          data: createdMovie,
-        },
-      });*/
-      return next(
-        new HttpError(`Something went wrong, could not find movie`, 500)
-      );
-    }
-
-    updatedMovie.favorite = favorite;
-    //updatedMovie.status = status;
-
-    try {
-      await updatedMovie.save();
-    } catch (err) {
-      return next(
-        new HttpError(`Something went wrong, could not find movie`, 500)
-      );
-    }
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        data: updatedMovie,
-      },
-    });
-  });
-
 const addToFavorites = () =>
   catchAsync(async (req, res, next) => {
     const { movieId } = req.body;
@@ -458,8 +364,6 @@ const getAllStatusDocs = () =>
     });
   });
 
-exports.deleteMovie = deleteOne();
-exports.updateMovie = updateOne();
 exports.createMovie = createOne();
 exports.getAllMovies = getAll();
 exports.getAllFavMovies = getAllFavDocs();
