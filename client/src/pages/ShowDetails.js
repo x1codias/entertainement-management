@@ -46,6 +46,7 @@ const ShowDetails = () => {
   const [loadedSeason, setLoadedSeason] = useState([]);
   const [myFavorites, setMyFavorites] = useState([]);
   const [watchedShows, setWatchedShows] = useState([]);
+  const [watchingShows, setWatchingShows] = useState([]);
   const [toWatchShows, setToWatchShows] = useState([]);
   const [backendShows, setBackendShows] = useState([]);
   const { isLoading, sendRequest } = useHttpClient();
@@ -94,7 +95,7 @@ const ShowDetails = () => {
         const urlKeywords = `${process.env.REACT_APP_TMDB_BASE_URL}3/tv/${id}/keywords?api_key=${process.env.REACT_APP_TMDB_API_KEY}`;
         const urlBackendShows = `http://localhost:5000/api/shows/`;
         const urlMyFavoriteShows = `http://localhost:5000/api/users/${userData.username}/favorite/shows`;
-        //const urlStatusShows = `http://localhost:5000/api/users/${userData.username}/status/shows`;
+        const urlStatusShows = `http://localhost:5000/api/users/${userData.username}/status/shows`;
 
         const showData = await sendRequest(urlShowDetails);
         const castCrewData = await sendRequest(urlCastCrew);
@@ -114,22 +115,24 @@ const ShowDetails = () => {
               Authorization: 'Bearer ' + auth.token,
             }
           );
-          /*const statusShowsData = await sendRequest(
+          const statusShowsData = await sendRequest(
             urlStatusShows,
             'GET',
             null,
             {
               Authorization: 'Bearer ' + auth.token,
             }
-          );*/
+          );
 
           console.log(myFavoriteShowsData);
-          //console.log(statusShowsData);
+          console.log(statusShowsData);
           myFavoriteShowsData && setMyFavorites(myFavoriteShowsData.favData);
-          /*statusShowsData != null &&
-            setWatchedShows(statusShowsData.watchedShows);
           statusShowsData != null &&
-            setToWatchShows(statusShowsData.toWatchShows);*/
+            setWatchedShows(statusShowsData.statusDone.entertainment);
+          statusShowsData != null &&
+            setToWatchShows(statusShowsData.statusToDo.entertainment);
+          statusShowsData != null &&
+            setWatchingShows(statusShowsData.statusDoing.entertainment);
         }
 
         console.log(showData);
@@ -216,9 +219,175 @@ const ShowDetails = () => {
     [loadedShow, auth, sendRequest]
   );
 
-  const watchedChangeHandler = (e) => {
-    console.log(`Marked as ${e.target.value}`);
-  };
+  const addToWatchedListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newShow = {
+        showId: loadedShow.id,
+        title: loadedShow.original_title,
+        description: loadedShow.overview,
+        image: loadedShow.poster_path,
+      };
+
+      const urlCreateShow = `http://localhost:5000/api/shows`;
+      const urlAddShowToWatched = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
+
+      console.log(backendShows.some((show) => loadedShow.id === show.showId));
+
+      if (
+        backendShows &&
+        !backendShows.some((show) => loadedShow.id === show.showId)
+      ) {
+        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+      await sendRequest(
+        urlAddShowToWatched,
+        'POST',
+        JSON.stringify({ showId: newShow.showId, statusValue: 'done' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, backendShows, auth, sendRequest]
+  );
+
+  const removeFromWatchedListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
+
+      await sendRequest(
+        urlRemoveFromWatchedList,
+        'PATCH',
+        JSON.stringify({ statusValue: 'done' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, auth, sendRequest]
+  );
+
+  const addToWatchListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newShow = {
+        showId: loadedShow.id,
+        title: loadedShow.original_title,
+        description: loadedShow.overview,
+        image: loadedShow.poster_path,
+      };
+
+      const urlCreateShow = `http://localhost:5000/api/shows`;
+      const urlAddShowToWatched = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
+
+      if (
+        backendShows &&
+        !backendShows.some((show) => loadedShow.id === show.showId)
+      ) {
+        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+      await sendRequest(
+        urlAddShowToWatched,
+        'POST',
+        JSON.stringify({ showId: newShow.showId, statusValue: 'to_do' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, backendShows, auth, sendRequest]
+  );
+
+  const removeFromWatchListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
+
+      await sendRequest(
+        urlRemoveFromWatchedList,
+        'PATCH',
+        JSON.stringify({ statusValue: 'to_do' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, auth, sendRequest]
+  );
+
+  const addToWatchingListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newShow = {
+        showId: loadedShow.id,
+        title: loadedShow.original_title,
+        description: loadedShow.overview,
+        image: loadedShow.poster_path,
+      };
+
+      const urlCreateShow = `http://localhost:5000/api/shows`;
+      const urlAddShowToWatched = `http://localhost:5000/api/users/${userData.userId}/status/shows/${loadedShow.id}`;
+
+      if (
+        backendShows &&
+        !backendShows.some((show) => loadedShow.id === show.showId)
+      ) {
+        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+      await sendRequest(
+        urlAddShowToWatched,
+        'POST',
+        JSON.stringify({ showId: newShow.showId, statusValue: 'doing' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, backendShows, auth, sendRequest]
+  );
+
+  const removeFromWatchingListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/status/shows/${loadedShow.id}`;
+
+      await sendRequest(
+        urlRemoveFromWatchedList,
+        'PATCH',
+        JSON.stringify({ statusValue: 'doing' }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedShow, auth, sendRequest]
+  );
 
   const platforms =
     loadedWatchProviders &&
@@ -472,6 +641,18 @@ const ShowDetails = () => {
     myFavorites &&
     myFavorites.some((favShow) => favShow.showId === loadedShow.id);
 
+  const showInWatchedList =
+    watchedShows &&
+    watchedShows.some((watchedShow) => watchedShow.showId === loadedShow.id);
+
+  const showInWatchingList =
+    watchingShows &&
+    watchingShows.some((watchingShow) => watchingShow.showId === loadedShow.id);
+
+  const showInWatchList =
+    toWatchShows &&
+    toWatchShows.some((watchShow) => watchShow.showId === loadedShow.id);
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -511,7 +692,11 @@ const ShowDetails = () => {
                     id="eye"
                     name="eye"
                     type="checkbox"
-                    onChange={watchedChangeHandler}
+                    onChange={
+                      !showInWatchedList
+                        ? addToWatchedListHandler
+                        : removeFromWatchedListHandler
+                    }
                     value="watched"
                   />
                   <IconContext.Provider
@@ -520,7 +705,7 @@ const ShowDetails = () => {
                       className: `${styles['title__btn--icon']}`,
                     }}
                   >
-                    <FaRegEye />
+                    {!showInWatchedList ? <FaRegEye /> : <FaRegEyeSlash />}
                   </IconContext.Provider>
                 </label>
                 <button
@@ -550,7 +735,11 @@ const ShowDetails = () => {
                     id="bookmark"
                     name="bookmark"
                     type="checkbox"
-                    onChange={watchedChangeHandler}
+                    onChange={
+                      !showInWatchList
+                        ? addToWatchListHandler
+                        : removeFromWatchListHandler
+                    }
                     value="toWatch"
                   />
                   <IconContext.Provider
@@ -559,7 +748,7 @@ const ShowDetails = () => {
                       className: `${styles['title__btn--icon']}`,
                     }}
                   >
-                    <BsBookmarkPlus />
+                    {!showInWatchList ? <BsBookmarkPlus /> : <BsBookmarkDash />}
                   </IconContext.Provider>
                 </label>
               </div>

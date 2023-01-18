@@ -66,15 +66,19 @@ const Auth = () => {
     const urlSignup = `http://localhost:5000/api/users/signup`;
     const urlLogin = `http://localhost:5000/api/users/login`;
 
+    const logUser = {
+      email: formState.inputs.email.value,
+      password: formState.inputs.password.value,
+    };
+
+    console.log(logUser);
+
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
           urlLogin,
           'POST',
-          JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
+          JSON.stringify(logUser),
           { 'Content-Type': 'application/json' }
         );
 
