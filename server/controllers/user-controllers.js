@@ -105,6 +105,8 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  console.log(existingUser, req.body);
+
   if (!existingUser) {
     const error = new HttpError('User with the provided email not found', 422);
     return next(error);

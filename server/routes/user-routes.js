@@ -30,13 +30,15 @@ router.get('/:id/favorite/shows', showController.getAllFavoriteShows);
 
 router.get('/:id/status', movieController.getAllStatusMovies);
 
-router.get(':id/status/shows', showController.getAllStatusShow);
+router.get('/:id/status/shows', showController.getAllStatusShow);
 
 router.post('/:id/favorite', movieController.addMovieToFavorites);
 
 router.post('/:id/favorite/shows', showController.addShowToFavorites);
 
 router.post('/:id/status', movieController.addMovieToStatus);
+
+router.post('/:uid/shows/status/:id', showController.addShowToStatus);
 
 router.patch('/:id/favorite/:mid', movieController.removeMovieFromFavorites);
 
@@ -47,6 +49,6 @@ router.patch(
 
 router.patch('/:id/status/:mid', movieController.updateMovieStatus);
 
-router.patch('/:id/status/:sid', showController.updateShowStatus);
+router.patch('/:uid/shows/status/:id', showController.updateShowStatus);
 
 module.exports = router;

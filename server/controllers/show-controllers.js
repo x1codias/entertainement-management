@@ -15,4 +15,4 @@ exports.removeShowFromFavorites = factory.removeDocFromFavorites(
 );
 exports.getAllStatusShow = factory.getAllStatusDocs('Show');
 exports.addShowToStatus = factory.addDocToStatus(Show, 'showId', 'Show');
-exports.updateShowStatus = factory.updateStatus(Show, 'showId');
+exports.updateShowStatus = factory.updateStatus(Show, 'showId', 'Show');

@@ -111,6 +111,8 @@ const createOne = (Model) =>
 
     const createdDoc = new Model(req.body);
 
+    console.log(req.body, createdDoc);
+
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
@@ -338,8 +340,6 @@ const getAllFavorites = (entertainment_type) =>
       return res.status(200).json({ userWithDocs });
     }
 
-    console.log(userWithDocs);
-
     res.status(200).json({
       favId: userWithDocs._id,
       favData: userWithDocs.entertainment,
@@ -361,7 +361,7 @@ const addToStatus = (Model, idType, entertainment_type) =>
     let status;
     try {
       user = await User.findById(req.userData.userId);
-      movie = await Model.findOne({ query });
+      doc = await Model.findOne({ query });
       status = await Status.findOne({
         entertainment_type,
         user: user._id,
@@ -420,23 +420,20 @@ const addToStatus = (Model, idType, entertainment_type) =>
     res.status(201).json({ data: addedDocument });
   });
 
-const updateStatus = (Model, idType) =>
+const updateStatus = (Model, idType, entertainment_type) =>
   catchAsync(async (req, res, next) => {
-    const { id, statusValue } = req.body;
+    const { statusValue } = req.body;
 
-    const query = {};
-
-    if (idType !== '') {
-      query[idType] = id;
-    }
+    const id = req.params.id;
 
     let doc;
     let status;
     try {
-      doc = await Model.findOne({ query });
+      doc = await Model.findOne({ [idType]: id });
       status = await Status.findOne({
         user: req.userData.userId,
         status: statusValue,
+        entertainment_type,
       });
     } catch (err) {
       console.log(err);
@@ -444,6 +441,8 @@ const updateStatus = (Model, idType) =>
         new HttpError(`Something went wrong, could not find document`, 500)
       );
     }
+
+    console.log(doc);
 
     if (!doc) {
       const error = new HttpError(`Could not find document with this id.`, 404);
@@ -459,7 +458,7 @@ const updateStatus = (Model, idType) =>
     }
 
     //const imagePath = movie.image;
-    console.log(status, document);
+    console.log(status, doc);
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
@@ -478,7 +477,7 @@ const updateStatus = (Model, idType) =>
     res.status(204).json({
       status: 'success',
       data: null,
-      message: `Successfully updated status of document with id ${movie._id}`,
+      message: `Successfully updated status of document with id ${doc._id}`,
     });
   });
 
@@ -510,8 +509,6 @@ const getAllStatusDocs = (entertainment_type) =>
         new HttpError('Something went wrong, could not find documents.', 500)
       );
     }
-
-    console.log(statusToDo, statusDone, statusDoing);
 
     if (
       !statusToDo ||
