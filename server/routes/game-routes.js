@@ -6,6 +6,10 @@ const router = express.Router();
 
 router.get('/', gameController.getAllGames);
 
+router.use(checkAuth);
+
+router.post('/', gameController.createGame);
+
 router.patch('/:id/update', gameController.updateGame);
 
 router.delete('/:id', gameController.deleteGame);
