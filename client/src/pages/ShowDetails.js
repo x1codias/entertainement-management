@@ -1,11 +1,4 @@
-import {
-  Fragment,
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-  useCallback,
-} from 'react';
+import { Fragment, useState, useEffect, useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { SiAppletv, SiRakuten, SiHbo, SiPrime } from 'react-icons/si';
@@ -23,13 +16,12 @@ import Gallery from '../components/Gallery';
 import Pagination from '../components/Pagination';
 import Card from '../components/Card';
 import LoadingSpinner from '../components/LoadingSpinner';
-import Table from '../components/Table';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
+import { AuthContext } from '../context/auth-context';
 
 import styles from './ShowDetails.module.css';
 import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
-import { AuthContext } from '../context/auth-context';
 
 const ShowDetails = () => {
   const auth = useContext(AuthContext);
@@ -160,41 +152,47 @@ const ShowDetails = () => {
     fetchShow();
   }, [sendRequest, id, season, auth]);
 
+  const createShow = useCallback(async () => {
+    const newShow = {
+      showId: loadedShow.id,
+      title: loadedShow.original_name,
+      description: loadedShow.overview,
+      image: loadedShow.poster_path,
+    };
+
+    const urlCreateShow = `http://localhost:5000/api/shows`;
+
+    if (
+      backendShows &&
+      !backendShows.some((show) => loadedShow.id === show.showId)
+    ) {
+      await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + auth.token,
+      });
+    }
+  }, [loadedShow, backendShows, auth, sendRequest]);
+
   const addToFavoritesHandler = useCallback(
     async (e) => {
       e.preventDefault();
       const userData = JSON.parse(localStorage.getItem('userData'));
-      const newShow = {
-        showId: loadedShow.id,
-        title: loadedShow.original_name,
-        description: loadedShow.overview,
-        image: loadedShow.poster_path,
-      };
 
-      const urlCreateShow = `http://localhost:5000/api/shows`;
       const urlAddShowToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/shows`;
 
-      if (
-        backendShows &&
-        !backendShows.some((show) => loadedShow.id === show.showId)
-      ) {
-        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + auth.token,
-        });
-      }
+      createShow();
 
       await sendRequest(
         urlAddShowToFavorite,
         'POST',
-        JSON.stringify({ id: newShow.showId }),
+        JSON.stringify({ id: loadedShow.id }),
         {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + auth.token,
         }
       );
     },
-    [loadedShow, backendShows, auth, sendRequest]
+    [loadedShow, auth, sendRequest, createShow]
   );
 
   const removeFromFavoritesHandler = useCallback(
@@ -219,111 +217,39 @@ const ShowDetails = () => {
     [loadedShow, auth, sendRequest]
   );
 
-  const addToWatchedListHandler = useCallback(
+  const addToStatusListHandler = useCallback(
     async (e) => {
       e.preventDefault();
       const userData = JSON.parse(localStorage.getItem('userData'));
-      const newShow = {
-        showId: loadedShow.id,
-        title: loadedShow.original_title,
-        description: loadedShow.overview,
-        image: loadedShow.poster_path,
-      };
 
-      const urlCreateShow = `http://localhost:5000/api/shows`;
       const urlAddShowToWatched = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
 
-      console.log(backendShows.some((show) => loadedShow.id === show.showId));
+      createShow();
 
-      if (
-        backendShows &&
-        !backendShows.some((show) => loadedShow.id === show.showId)
-      ) {
-        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + auth.token,
-        });
-      }
       await sendRequest(
         urlAddShowToWatched,
         'POST',
-        JSON.stringify({ showId: newShow.showId, statusValue: 'done' }),
+        JSON.stringify({ showId: loadedShow.id, statusValue: e.target.value }),
         {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + auth.token,
         }
       );
     },
-    [loadedShow, backendShows, auth, sendRequest]
+    [auth, loadedShow, sendRequest, createShow]
   );
 
-  const removeFromWatchedListHandler = useCallback(
+  const updateStatusListHandler = useCallback(
     async (e) => {
       e.preventDefault();
       const userData = JSON.parse(localStorage.getItem('userData'));
 
-      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
+      const urlUpdateStatusList = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
 
       await sendRequest(
-        urlRemoveFromWatchedList,
+        urlUpdateStatusList,
         'PATCH',
-        JSON.stringify({ statusValue: 'done' }),
-        {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + auth.token,
-        }
-      );
-    },
-    [loadedShow, auth, sendRequest]
-  );
-
-  const addToWatchListHandler = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      const newShow = {
-        showId: loadedShow.id,
-        title: loadedShow.original_title,
-        description: loadedShow.overview,
-        image: loadedShow.poster_path,
-      };
-
-      const urlCreateShow = `http://localhost:5000/api/shows`;
-      const urlAddShowToWatched = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
-
-      if (
-        backendShows &&
-        !backendShows.some((show) => loadedShow.id === show.showId)
-      ) {
-        await sendRequest(urlCreateShow, 'POST', JSON.stringify(newShow), {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + auth.token,
-        });
-      }
-      await sendRequest(
-        urlAddShowToWatched,
-        'POST',
-        JSON.stringify({ showId: newShow.showId, statusValue: 'to_do' }),
-        {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + auth.token,
-        }
-      );
-    },
-    [loadedShow, backendShows, auth, sendRequest]
-  );
-
-  const removeFromWatchListHandler = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const userData = JSON.parse(localStorage.getItem('userData'));
-
-      const urlRemoveFromWatchedList = `http://localhost:5000/api/users/${userData.userId}/shows/status/${loadedShow.id}`;
-
-      await sendRequest(
-        urlRemoveFromWatchedList,
-        'PATCH',
-        JSON.stringify({ statusValue: 'to_do' }),
+        JSON.stringify({ statusValue: e.target.value }),
         {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + auth.token,
@@ -694,10 +620,10 @@ const ShowDetails = () => {
                     type="checkbox"
                     onChange={
                       !showInWatchedList
-                        ? addToWatchedListHandler
-                        : removeFromWatchedListHandler
+                        ? addToStatusListHandler
+                        : updateStatusListHandler
                     }
-                    value="watched"
+                    value="done"
                   />
                   <IconContext.Provider
                     value={{
@@ -737,10 +663,10 @@ const ShowDetails = () => {
                     type="checkbox"
                     onChange={
                       !showInWatchList
-                        ? addToWatchListHandler
-                        : removeFromWatchListHandler
+                        ? addToStatusListHandler
+                        : updateStatusListHandler
                     }
-                    value="toWatch"
+                    value="to_do"
                   />
                   <IconContext.Provider
                     value={{

@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useContext, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { IconContext } from 'react-icons';
@@ -14,6 +14,7 @@ import {
   FaDesktop,
   FaNeos,
   FaGlobe,
+  FaSlash,
 } from 'react-icons/fa';
 import { GrAppleAppStore } from 'react-icons/gr';
 import {
@@ -35,11 +36,13 @@ import Gallery from '../components/Gallery';
 import Pagination from '../components/Pagination';
 import { useHttpClient } from '../hooks/http-hook';
 import { usePagination } from '../hooks/pagination-hook';
+import { AuthContext } from '../context/auth-context';
 
 import styles from './GameDetails.module.css';
 import avatar from '../assets/istockphoto-1337144146-170667a.jpg';
 
 const GameDetails = () => {
+  const auth = useContext(AuthContext);
   const { id } = useParams();
   const [loadedGame, setLoadedGame] = useState({});
   const [loadedAchievments, setLoadedAchievments] = useState([]);
@@ -48,7 +51,12 @@ const GameDetails = () => {
   const [loadedAdditions, setLoadedAdditions] = useState([]);
   const [loadedInstallments, setLoadedInstallments] = useState([]);
   const [loadedTeam, setLoadedTeam] = useState([]);
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [myFavorites, setMyFavorites] = useState([]);
+  const [playedGames, setPlayedGames] = useState([]);
+  const [playingGames, setPlayingGames] = useState([]);
+  const [toPlayGames, setToPlayGames] = useState([]);
+  const [backendGames, setBackendGames] = useState([]);
+  const { isLoading, sendRequest } = useHttpClient();
   const {
     currentPage: currentPageVideo,
     prevHandler: prevHandlerVideo,
@@ -82,6 +90,8 @@ const GameDetails = () => {
 
   useEffect(() => {
     const fetchGame = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
       const urlGame = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}?key=${process.env.REACT_APP_RAWG_API_KEY}`;
       const urlAchievments = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/achievements?page=${currentPageAchievments}&key=${process.env.REACT_APP_RAWG_API_KEY}`;
       const urlVideos = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/movies?page=${currentPageVideo}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
@@ -89,6 +99,9 @@ const GameDetails = () => {
       const urlAdditions = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/additions?page=${currentPageAdditions}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
       const urlInstallments = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/game-series?page=${currentPageInstallments}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
       const urlTeam = `${process.env.REACT_APP_RAWG_BASE_URL}games/${id}/development-team?page=${currentPageTeam}&page_size=5&key=${process.env.REACT_APP_RAWG_API_KEY}`;
+      const urlBackendGames = `http://localhost:5000/api/games/`;
+      const urlMyFavoriteGames = `http://localhost:5000/api/users/${userData.username}/favorite/games`;
+      const urlStatusGames = `http://localhost:5000/api/users/${userData.username}/status/games`;
 
       try {
         const gameData = await sendRequest(urlGame);
@@ -98,6 +111,36 @@ const GameDetails = () => {
         const additionsData = await sendRequest(urlAdditions);
         const installmentsData = await sendRequest(urlInstallments);
         const teamData = await sendRequest(urlTeam);
+        const backendGamesData = await sendRequest(urlBackendGames);
+
+        if (auth.isLoggedIn) {
+          const myFavoriteGamesData = await sendRequest(
+            urlMyFavoriteGames,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+          const statusGamesData = await sendRequest(
+            urlStatusGames,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+
+          console.log(myFavoriteGamesData);
+          console.log(statusGamesData);
+          myFavoriteGamesData && setMyFavorites(myFavoriteGamesData.favData);
+          statusGamesData != null &&
+            setPlayedGames(statusGamesData.statusDone.entertainment);
+          statusGamesData != null &&
+            setToPlayGames(statusGamesData.statusToDo.entertainment);
+          statusGamesData != null &&
+            setPlayingGames(statusGamesData.statusDoing.entertainment);
+        }
 
         console.log(gameData);
         console.log(achievmentsData);
@@ -106,6 +149,7 @@ const GameDetails = () => {
         console.log(additionsData);
         console.log(installmentsData);
         console.log(teamData);
+        console.log(backendGamesData);
 
         setLoadedGame(gameData);
         setLoadedAchievments(achievmentsData);
@@ -114,6 +158,7 @@ const GameDetails = () => {
         setLoadedAdditions(additionsData);
         setLoadedInstallments(installmentsData);
         setLoadedTeam(teamData);
+        setBackendGames(backendGamesData.docs);
       } catch (err) {}
     };
     fetchGame();
@@ -126,16 +171,115 @@ const GameDetails = () => {
     currentPageAdditions,
     currentPageInstallments,
     currentPageTeam,
+    auth,
   ]);
 
-  const addToFavoritesHandler = (e) => {
-    e.preventDefault();
-    console.log('Added to the favourites');
-  };
+  const createGame = useCallback(async () => {
+    const newGame = {
+      gameId: loadedGame.id,
+      title: loadedGame.original_name,
+      description: loadedGame.overview,
+      image: loadedGame.poster_path,
+    };
 
-  const playedChangeHandler = (e) => {
-    console.log(`Marked as ${e.target.value}`);
-  };
+    const urlCreateGame = `http://localhost:5000/api/games`;
+
+    if (
+      backendGames &&
+      !backendGames.some((game) => loadedGame.id === game.gameId)
+    ) {
+      await sendRequest(urlCreateGame, 'POST', JSON.stringify(newGame), {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + auth.token,
+      });
+    }
+  }, [loadedGame, backendGames, auth, sendRequest]);
+
+  const addToFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlAddGameToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/games`;
+
+      createGame();
+
+      await sendRequest(
+        urlAddGameToFavorite,
+        'POST',
+        JSON.stringify({ id: loadedGame.id }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedGame, auth, sendRequest, createGame]
+  );
+
+  const removeFromFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/games/${loadedGame.id}`;
+
+      const responseData = await sendRequest(
+        urlRemoveFromFavorite,
+        'PATCH',
+        {},
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+
+      console.log(responseData);
+    },
+    [loadedGame, auth, sendRequest]
+  );
+
+  const addToStatusListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlAddGameToStatusList = `http://localhost:5000/api/users/${userData.userId}/games/status/${loadedGame.id}`;
+
+      createGame();
+
+      await sendRequest(
+        urlAddGameToStatusList,
+        'POST',
+        JSON.stringify({ gameId: loadedGame.id, statusValue: e.target.value }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [auth, loadedGame, sendRequest, createGame]
+  );
+
+  const updateStatusListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlUpdateStatusList = `http://localhost:5000/api/users/${userData.userId}/games/status/${loadedGame.id}`;
+
+      await sendRequest(
+        urlUpdateStatusList,
+        'PATCH',
+        JSON.stringify({ statusValue: e.target.value }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedGame, auth, sendRequest]
+  );
 
   const platforms =
     loadedGame.parent_platforms &&
@@ -309,6 +453,22 @@ const GameDetails = () => {
       />
     ));
 
+  const gameInFavList =
+    myFavorites &&
+    myFavorites.some((favGame) => favGame.gameId === loadedGame.id);
+
+  const gameInPlayedList =
+    playedGames &&
+    playedGames.some((playedGame) => playedGame.gameId === loadedGame.id);
+
+  const gameInPlayingList =
+    playingGames &&
+    playingGames.some((playingGame) => playingGame.gameId === loadedGame.id);
+
+  const gameInToPlayList =
+    toPlayGames &&
+    toPlayGames.some((toPlayGame) => toPlayGame.gameId === loadedGame.id);
+
   return (
     <Fragment>
       {isLoading && (
@@ -343,8 +503,12 @@ const GameDetails = () => {
                       id="eye"
                       name="eye"
                       type="checkbox"
-                      onChange={playedChangeHandler}
-                      value="watched"
+                      onChange={
+                        !gameInPlayedList
+                          ? addToStatusListHandler
+                          : updateStatusListHandler
+                      }
+                      value="done"
                     />
                     <IconContext.Provider
                       value={{
@@ -352,11 +516,22 @@ const GameDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <IoGameControllerOutline />
+                      {!gameInPlayedList ? (
+                        <IoGameControllerOutline />
+                      ) : (
+                        <div>
+                          <IoGameControllerOutline />
+                          <FaSlash />
+                        </div>
+                      )}
                     </IconContext.Provider>
                   </label>
                   <button
-                    onClick={addToFavoritesHandler}
+                    onClick={
+                      !gameInFavList
+                        ? addToFavoritesHandler
+                        : removeFromFavoritesHandler
+                    }
                     className={styles['title__btn']}
                     title="Add game to favorites list"
                   >
@@ -366,7 +541,7 @@ const GameDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <TbHeart />
+                      {!gameInFavList ? <TbHeart /> : <TbHeartOff />}
                     </IconContext.Provider>
                   </button>
                   <label
@@ -378,8 +553,12 @@ const GameDetails = () => {
                       id="bookmark"
                       name="bookmark"
                       type="checkbox"
-                      onChange={playedChangeHandler}
-                      value="toWatch"
+                      onChange={
+                        !gameInToPlayList
+                          ? addToStatusListHandler
+                          : updateStatusListHandler
+                      }
+                      value="to_do"
                     />
                     <IconContext.Provider
                       value={{
@@ -387,7 +566,11 @@ const GameDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <BsBookmarkPlus />
+                      {!gameInToPlayList ? (
+                        <BsBookmarkPlus />
+                      ) : (
+                        <BsBookmarkDash />
+                      )}
                     </IconContext.Provider>
                   </label>
                 </div>

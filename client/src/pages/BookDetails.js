@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { IconContext } from 'react-icons';
 import { FaStar, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
@@ -9,35 +9,185 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { useHttpClient } from '../hooks/http-hook';
 
 import styles from './BookDetails.module.css';
+import { AuthContext } from '../context/auth-context';
 
 const BookDetails = () => {
+  const auth = useContext(AuthContext);
   const stars = Array(5).fill(0);
   const { id } = useParams();
   const [loadedBook, setLoadedBook] = useState({});
+  const [myFavorites, setMyFavorites] = useState([]);
+  const [readBooks, setReadBooks] = useState([]);
+  const [readingBooks, setReadingBooks] = useState([]);
+  const [toReadBooks, setToReadBooks] = useState([]);
+  const [backendBooks, setBackendBooks] = useState([]);
   const { isLoading, sendRequest } = useHttpClient();
 
   useEffect(() => {
     const fetchBook = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
       const url = `${process.env.REACT_APP_GOOGLE_BOOKS_BASE_URL}/${id}`;
+      const urlBackendBooks = `http://localhost:5000/api/books/`;
+      const urlMyFavoriteBooks = `http://localhost:5000/api/users/${userData.username}/favorite/books`;
+      const urlStatusBooks = `http://localhost:5000/api/users/${userData.username}/status/books`;
+
       try {
         const responseData = await sendRequest(url);
+        const backendBooksData = await sendRequest(urlBackendBooks);
+
+        if (auth.isLoggedIn) {
+          const myFavoriteBooksData = await sendRequest(
+            urlMyFavoriteBooks,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+          const statusBooksData = await sendRequest(
+            urlStatusBooks,
+            'GET',
+            null,
+            {
+              Authorization: 'Bearer ' + auth.token,
+            }
+          );
+
+          console.log(myFavoriteBooksData);
+          console.log(statusBooksData);
+          myFavoriteBooksData && setMyFavorites(myFavoriteBooksData.favData);
+          statusBooksData != null &&
+            setReadBooks(statusBooksData.statusDone.entertainment);
+          statusBooksData != null &&
+            setToReadBooks(statusBooksData.statusToDo.entertainment);
+          statusBooksData != null &&
+            setReadingBooks(statusBooksData.statusDoing.entertainment);
+        }
 
         console.log(responseData);
+        console.log(backendBooksData);
 
         setLoadedBook(responseData);
+        setBackendBooks(backendBooksData.docs);
       } catch (err) {}
     };
     fetchBook();
-  }, [sendRequest, id]);
+  }, [sendRequest, id, auth]);
 
-  const addToFavoritesHandler = (e) => {
-    e.preventDefault();
-    console.log('Added to the favourites');
-  };
+  const addToFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newBook = {
+        bookId: loadedBook.id,
+        title: loadedBook.original_name,
+        description: loadedBook.overview,
+        image: loadedBook.poster_path,
+      };
 
-  const readChangeHandler = (e) => {
-    console.log(`Marked as ${e.target.value}`);
-  };
+      const urlCreateBook = `http://localhost:5000/api/books`;
+      const urlAddBookToFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/books`;
+
+      if (
+        backendBooks &&
+        !backendBooks.some((book) => loadedBook.id === book.bookId)
+      ) {
+        await sendRequest(urlCreateBook, 'POST', JSON.stringify(newBook), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+
+      await sendRequest(
+        urlAddBookToFavorite,
+        'POST',
+        JSON.stringify({ id: newBook.bookId }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedBook, backendBooks, auth, sendRequest]
+  );
+
+  const removeFromFavoritesHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlRemoveFromFavorite = `http://localhost:5000/api/users/${userData.userId}/favorite/books/${loadedBook.id}`;
+
+      const responseData = await sendRequest(
+        urlRemoveFromFavorite,
+        'PATCH',
+        {},
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+
+      console.log(responseData);
+    },
+    [loadedBook, auth, sendRequest]
+  );
+
+  const addToStatusListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const newBook = {
+        bookId: loadedBook.id,
+        title: loadedBook.original_title,
+        description: loadedBook.overview,
+        image: loadedBook.poster_path,
+      };
+
+      const urlCreateBook = `http://localhost:5000/api/books`;
+      const urlAddBookToWatched = `http://localhost:5000/api/users/${userData.userId}/books/status/${loadedBook.id}`;
+
+      if (
+        backendBooks &&
+        !backendBooks.some((book) => loadedBook.id === book.bookId)
+      ) {
+        await sendRequest(urlCreateBook, 'POST', JSON.stringify(newBook), {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        });
+      }
+      await sendRequest(
+        urlAddBookToWatched,
+        'POST',
+        JSON.stringify({ bookId: newBook.bookId, statusValue: e.target.value }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [auth, loadedBook, backendBooks, sendRequest]
+  );
+
+  const updateStatusListHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const userData = JSON.parse(localStorage.getItem('userData'));
+
+      const urlUpdateStatusList = `http://localhost:5000/api/users/${userData.userId}/books/status/${loadedBook.id}`;
+
+      await sendRequest(
+        urlUpdateStatusList,
+        'PATCH',
+        JSON.stringify({ statusValue: e.target.value }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
+        }
+      );
+    },
+    [loadedBook, auth, sendRequest]
+  );
 
   const authors =
     loadedBook.volumeInfo &&
@@ -102,6 +252,22 @@ const BookDetails = () => {
       );
     });
 
+  const bookInFavList =
+    myFavorites &&
+    myFavorites.some((favBook) => favBook.bookId === loadedBook.id);
+
+  const bookInReadList =
+    readBooks &&
+    readBooks.some((readBook) => readBook.bookId === loadedBook.id);
+
+  const bookInReadingList =
+    readingBooks &&
+    readingBooks.some((readingBook) => readingBook.bookId === loadedBook.id);
+
+  const bookInToReadList =
+    toReadBooks &&
+    toReadBooks.some((toReadBook) => toReadBook.bookId === loadedBook.id);
+
   return (
     <Fragment>
       {isLoading && <LoadingSpinner />}
@@ -145,8 +311,12 @@ const BookDetails = () => {
                       id="eye"
                       name="eye"
                       type="checkbox"
-                      onChange={readChangeHandler}
-                      value="read"
+                      onChange={
+                        !bookInReadList
+                          ? addToStatusListHandler
+                          : updateStatusListHandler
+                      }
+                      value="done"
                     />
                     <IconContext.Provider
                       value={{
@@ -154,11 +324,15 @@ const BookDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <FaRegEye />
+                      {!bookInReadList ? <FaRegEye /> : <FaRegEyeSlash />}
                     </IconContext.Provider>
                   </label>
                   <button
-                    onClick={addToFavoritesHandler}
+                    onClick={
+                      !bookInFavList
+                        ? addToFavoritesHandler
+                        : removeFromFavoritesHandler
+                    }
                     className={styles['title__btn']}
                     title="Add book to favorites list"
                   >
@@ -168,7 +342,7 @@ const BookDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <TbHeart />
+                      {!bookInFavList ? <TbHeart /> : <TbHeartOff />}
                     </IconContext.Provider>
                   </button>
                   <label
@@ -180,8 +354,12 @@ const BookDetails = () => {
                       id="bookmark"
                       name="bookmark"
                       type="checkbox"
-                      onChange={readChangeHandler}
-                      value="toRead"
+                      onChange={
+                        !bookInToReadList
+                          ? addToStatusListHandler
+                          : updateStatusListHandler
+                      }
+                      value="to_do"
                     />
                     <IconContext.Provider
                       value={{
@@ -189,7 +367,11 @@ const BookDetails = () => {
                         className: `${styles['title__btn--icon']}`,
                       }}
                     >
-                      <BsBookmarkPlus />
+                      {!bookInToReadList ? (
+                        <BsBookmarkPlus />
+                      ) : (
+                        <BsBookmarkDash />
+                      )}
                     </IconContext.Provider>
                   </label>
                 </div>
